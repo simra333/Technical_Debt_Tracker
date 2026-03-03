@@ -135,3 +135,31 @@ class TestRoutes(unittest.TestCase):
                 self.assertEqual(updated_debt.effort_estimate, 'Low')
                 self.assertEqual(updated_debt.status, 'Closed')
                 self.assertEqual(updated_debt.assigned_to, 'Bob')
+
+    def test_delete_debt(self):
+        """Test deleting an existing technical debt item via a DELETE request"""
+        with self.app.app_context():
+            # Create test data
+            debt = TechnicalDebt(
+                title="Test Debt 1",
+                description="This is a test item",
+                risk="High",
+                effort_estimate="Medium",
+                status="Open",
+                assigned_to="Alice"
+            )
+            db.session.add(debt)
+            db.session.commit()
+            debt_id = debt.id
+
+            # Make a DELETE request to delete the technical debt item
+            response = self.client.delete(f'/api/debts/{debt_id}')
+            self.assertEqual(response.status_code, 204)
+
+            # Verify the item was deleted from the database
+            with self.app.app_context():
+                deleted_debt = db.session.get(TechnicalDebt, debt_id)
+                self.assertIsNone(deleted_debt)
+
+if __name__ == '__main__':
+    unittest.main()

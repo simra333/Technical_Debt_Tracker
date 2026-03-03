@@ -79,3 +79,14 @@ def update_debt(debt_id):
         'assigned_to': debt.assigned_to,
         'created_at': debt.created_at.isoformat()
     }), 200
+
+@api.route('/api/debts/<int:debt_id>', methods=['DELETE'])
+def delete_debt(debt_id):
+    """Delete a technical debt item"""
+    debt = db.session.get(TechnicalDebt, debt_id)
+    if debt is None:
+        abort(404, description="Technical debt item not found")
+
+    db.session.delete(debt)
+    db.session.commit()
+    return jsonify({'message': 'Technical debt item deleted successfully'}), 204
