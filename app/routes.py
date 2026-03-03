@@ -90,3 +90,9 @@ def delete_debt(debt_id):
     db.session.delete(debt)
     db.session.commit()
     return jsonify({'message': 'Technical debt item deleted successfully'}), 204
+
+# UI Routes (render HTML templates)
+@api.route('/')
+def index():
+    """Render the main page"""
+    return render_template('index.html')
