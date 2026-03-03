@@ -29,7 +29,7 @@ def get_debt(debt_id):
         'created_at': debt.created_at.isoformat()
     })
 
-@api.route('/api/debts', methods=['POST']) # Create a new technical debt item
+@api.route('/api/debts', methods=['POST']) 
 def create_debt():
     """ Create a new techical debt item"""
     data = request.get_json()
@@ -46,3 +46,36 @@ def create_debt():
     db.session.add(new_debt)
     db.session.commit()
     return jsonify(new_debt.to_dict()), 201
+
+@api.route('/api/debts/<int:debt_id>', methods=['PUT']) 
+def update_debt(debt_id):
+    """Update an existing technical debt item"""
+    debt = db.session.get(TechnicalDebt,debt_id)
+    if debt is None:
+        abort(404, description="Technical debt item not found")
+
+    data = request.get_json()
+    if 'title' in data:
+        debt.title = data['title']
+    if 'description' in data:
+        debt.description = data['description']
+    if 'risk' in data:
+        debt.risk = data['risk']
+    if 'effort_estimate' in data:
+        debt.effort_estimate = data['effort_estimate']
+    if 'status' in data:
+        debt.status = data['status']
+    if 'assigned_to' in data:
+        debt.assigned_to = data['assigned_to']
+
+    db.session.commit()
+    return jsonify({
+        'id': debt.id,
+        'title': debt.title,
+        'description': debt.description,
+        'risk': debt.risk,
+        'effort_estimate': debt.effort_estimate,
+        'status': debt.status,
+        'assigned_to': debt.assigned_to,
+        'created_at': debt.created_at.isoformat()
+    }), 200

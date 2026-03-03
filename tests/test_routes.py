@@ -115,3 +115,23 @@ class TestRoutes(unittest.TestCase):
                 data=json.dumps(updated_data),
                 content_type='application/json'
             )
+
+            # Check the response status code and content
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+            self.assertEqual(data['title'], 'Updated Test Debt 1')
+            self.assertEqual(data['description'], 'This is an updated test item')
+            self.assertEqual(data['risk'], 'Low')
+            self.assertEqual(data['effort_estimate'], 'Low')
+            self.assertEqual(data['status'], 'Closed')
+            self.assertEqual(data['assigned_to'], 'Bob')
+
+            # Verify the item was updated in the database
+            with self.app.app_context():
+                updated_debt = db.session.get(TechnicalDebt, debt_id)
+                self.assertEqual(updated_debt.title, 'Updated Test Debt 1')
+                self.assertEqual(updated_debt.description, 'This is an updated test item')      
+                self.assertEqual(updated_debt.risk, 'Low')
+                self.assertEqual(updated_debt.effort_estimate, 'Low')
+                self.assertEqual(updated_debt.status, 'Closed')
+                self.assertEqual(updated_debt.assigned_to, 'Bob')
