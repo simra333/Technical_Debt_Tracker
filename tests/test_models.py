@@ -5,7 +5,7 @@ from datetime import datetime
 
 class TestTechnicalDebtModel(unittest.TestCase):
     def setUp(self): 
-        """Set up a test fixtures before each test."""
+        """Set up a test fixture before each test."""
         self.app = create_app()
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
