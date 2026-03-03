@@ -6,13 +6,15 @@ from app.models import TechnicalDebt
 api=Blueprint('api', __name__)
 
 # API Routes (return JSON data)
-@api.route('/api/debts', methods=['GET']) # Get all technical debt items
+@api.route('/api/debts', methods=['GET']) 
 def get_debts():
+    """Get all technical debt items"""
     debts = TechnicalDebt.query.all()
     return jsonify([debt.to_dict() for debt in debts])
 
-@api.route('api/debts/<int:debt_id>', methods=['GET']) # Get a specific technical debt item by ID
+@api.route('/api/debts/<int:debt_id>', methods=['GET']) 
 def get_debt(debt_id):
+    """Get a specific technical debt item by ID"""
     debt = TechnicalDebt.query.get(debt_id)
     if debt is None:
         abort(404, description="Technical debt item not found")
@@ -26,3 +28,21 @@ def get_debt(debt_id):
         'assigned_to': debt.assigned_to,
         'created_at': debt.created_at.isoformat()
     })
+
+@api.route('/api/debts', methods=['POST']) # Create a new technical debt item
+def create_debt():
+    """ Create a new techical debt item"""
+    data = request.get_json()
+
+    new_debt = TechnicalDebt(
+        title=data['title'],
+        description=data['description'],
+        risk=data['risk'],
+        effort_estimate=data['effort_estimate'],
+        status=data.get('status', 'Open'),
+        assigned_to=data.get('assigned_to')
+    )
+
+    db.session.add(new_debt)
+    db.session.commit()
+    return jsonify(new_debt.to_dict()), 201
