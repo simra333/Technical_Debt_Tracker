@@ -20,8 +20,39 @@ class TestRoutes(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
+    def test_create_technical_debt(self):
+        """Test creating a new technical debt item via a POST request"""
+        # 1. Prepare test data
+        debt_data = {
+            "title": "Test Debt 1",
+            "description": "This is a test item",
+            "risk": "High",
+            "effort_estimate": "Medium",
+            "status": "Open",
+            "assigned_to": "Alice"
+        }
+
+        # 2. Make a POST request to create a new technical debt item
+        response = self.client.post(
+            '/api/debts',
+            data=json.dumps(debt_data),
+            content_type='application/json'
+        )
+
+        # 3. Check the response status code and content
+        self.assertEqual(response.status_code, 201)
+
+        data = json.loads(response.data)
+        self.assertEqual(data['title'], 'Test Debt 1')
+        self.assertEqual(data['description'], 'This is a test item')
+        self.assertEqual(data['risk'], 'High')
+        self.assertEqual(data['effort_estimate'], 'Medium')
+        self.assertEqual(data['status'], 'Open')
+        self.assertEqual(data['assigned_to'], 'Alice')
+
+
     def test_get_technical_debt(self):
-        """Test retrieving all technical debt items."""
+        """Test retrieving all technical debt items via a GET request"""
         with self.app.app_context():
             # Create test data
             debt1 = TechnicalDebt(
@@ -51,3 +82,84 @@ class TestRoutes(unittest.TestCase):
             self.assertEqual(len(data), 2)
             self.assertEqual(data[0]['title'], "Test Debt 1")
             self.assertEqual(data[1]['title'], "Test Debt 2")
+
+    def test_update_debt_items(self):
+        """Test updating an existing technical debt item via a PUT request"""
+        with self.app.app_context():
+            # Create test data
+            debt = TechnicalDebt(
+                title="Test Debt 1",
+                description="This is a test item",
+                risk="High",
+                effort_estimate="Medium",
+                status="Open",
+                assigned_to="Alice"
+            )
+            db.session.add(debt)
+            db.session.commit()
+            debt_id = debt.id
+
+            # Prepare updated data
+            updated_data = {
+                "title": "Updated Test Debt 1",
+                "description": "This is an updated test item",
+                "risk": "Low",
+                "effort_estimate": "Low",
+                "status": "Closed",
+                "assigned_to": "Bob"
+            }
+            
+            # Make a PUT request to update the technical debt item
+            response = self.client.put(
+                f'/api/debts/{debt_id}',
+                data=json.dumps(updated_data),
+                content_type='application/json'
+            )
+
+            # Check the response status code and content
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(response.data)
+            self.assertEqual(data['title'], 'Updated Test Debt 1')
+            self.assertEqual(data['description'], 'This is an updated test item')
+            self.assertEqual(data['risk'], 'Low')
+            self.assertEqual(data['effort_estimate'], 'Low')
+            self.assertEqual(data['status'], 'Closed')
+            self.assertEqual(data['assigned_to'], 'Bob')
+
+            # Verify the item was updated in the database
+            with self.app.app_context():
+                updated_debt = db.session.get(TechnicalDebt, debt_id)
+                self.assertEqual(updated_debt.title, 'Updated Test Debt 1')
+                self.assertEqual(updated_debt.description, 'This is an updated test item')      
+                self.assertEqual(updated_debt.risk, 'Low')
+                self.assertEqual(updated_debt.effort_estimate, 'Low')
+                self.assertEqual(updated_debt.status, 'Closed')
+                self.assertEqual(updated_debt.assigned_to, 'Bob')
+
+    def test_delete_debt(self):
+        """Test deleting an existing technical debt item via a DELETE request"""
+        with self.app.app_context():
+            # Create test data
+            debt = TechnicalDebt(
+                title="Test Debt 1",
+                description="This is a test item",
+                risk="High",
+                effort_estimate="Medium",
+                status="Open",
+                assigned_to="Alice"
+            )
+            db.session.add(debt)
+            db.session.commit()
+            debt_id = debt.id
+
+            # Make a DELETE request to delete the technical debt item
+            response = self.client.delete(f'/api/debts/{debt_id}')
+            self.assertEqual(response.status_code, 204)
+
+            # Verify the item was deleted from the database
+            with self.app.app_context():
+                deleted_debt = db.session.get(TechnicalDebt, debt_id)
+                self.assertIsNone(deleted_debt)
+
+if __name__ == '__main__':
+    unittest.main()
