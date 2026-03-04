@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add a new Technical Debt Item</title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <h1>Add Technical Debt</h1>
+        <a href="/">Back to Main Page</a>
+
+        <form id="add-debt-item">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required>
+            <br><br>
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" required>
+            <br><br>
+            <label for="risk">Risk</label>
+            <input type="number" id="risk" name="risk" required>
+            <br><br>
+            <label for="effort_estimate">Effort Estimate (hours)</label>
+            <input type="number" id="effort_estimate" name="effort_estimate" required>
+            <br><br>
+            <button type="submit">Add Debt Item</button>
+        </form>
+
+        # Include JavaScript to handle form submission
+    </body>
+</html>
