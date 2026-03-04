@@ -96,3 +96,14 @@ def delete_debt(debt_id):
 def index():
     """Render the main page"""
     return render_template('index.html')
+
+@api.route('/add')
+def add_debt_ui():
+    """Render the page to add a new technical debt item"""
+    return render_template('add.html')
+
+@api.route('/edit/<int:debt_id>')
+def edit_ui(debt_id):
+    """Render the page to edit an existing technical debt item"""
+    return render_template('edit.html', debt_id=debt_id)
+    
