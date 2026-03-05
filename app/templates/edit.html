@@ -27,10 +27,22 @@
             <input type="number" id="effort_estimate" name="effort_estimate" value="{{debt_item.effort_estimate}}" required>
             <br><br>
 
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+                <option value="Open" {% if debt_item.status == 'Open' %}selected{% endif %}>Open</option>
+                <option value="In Progress" {% if debt_item.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                <option value="Resolved" {% if debt_item.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+            </select>
+            <br><br>
+
+            <label for="assigned_to">Assigned To (Optional)</label>
+            <input type="text" id="assigned_to" name="assigned_to" value="{{debt_item.assigned_to}}">
+            <br><br>
+
             <button type="submit">Save Changes</button>
         </form>
 
-        # Include JavaScript to handle form submission
+        <script src="/static/edit.js"></script>
 
     </body>
 </html>
