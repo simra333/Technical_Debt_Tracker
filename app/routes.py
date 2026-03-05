@@ -96,3 +96,18 @@ def delete_debt(debt_id):
 def index():
     """Render the main page"""
     return render_template('index.html')
+
+@api.route('/add')
+def add_debt_ui():
+    """Render the page to add a new technical debt item"""
+    return render_template('add.html')
+
+@api.route('/edit/<int:debt_id>')
+def edit_ui(debt_id):
+    """Render the page to edit an existing technical debt item"""
+    # fetch the debt item from the database to pre-populate the form 
+    debt_item = db.session.get(TechnicalDebt, debt_id)
+    if not debt_item:
+        return "Debt item not found", 404
+    return render_template('edit.html', debt_id=debt_id, debt_item=debt_item)
+    
