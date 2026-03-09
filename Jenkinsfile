@@ -53,6 +53,7 @@ spec:
             steps {
                 container('docker') {
                     sh """
+                    timeout 15 sh -c 'until docker info; do echo .; sleep 1; done'
                     docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} .
                 """
                 }
