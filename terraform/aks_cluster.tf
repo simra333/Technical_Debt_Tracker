@@ -1,5 +1,5 @@
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = "tdtracker-aks"
+  name                = "TDT-aks-cluster"
   location            = "UKSouth"
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "TDTaks"
