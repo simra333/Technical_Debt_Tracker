@@ -7,17 +7,17 @@ kind: Pod
 spec:
     containers:
     - name: docker
-        image: docker:latest
-        command:
-        - cat
-        tty: true
-        volumeMounts:
-        - mountPath: /var/run/docker.sock
-          name: docker-sock
+      image: docker:latest
+      command:
+      - cat
+      tty: true
+      volumeMounts:
+      - mountPath: /var/run/docker.sock
+        name: docker-sock
     volumes:
     - name: docker-sock
-        hostPath:
-          path: /var/run/docker.sock
+      hostPath:
+        path: /var/run/docker.sock
 '''
         }
     }
@@ -50,9 +50,11 @@ spec:
         // }
         stage('Build Docker Image') {
             steps {
-                sh """
+                container('docker') {
+                    sh """
                     docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} .
                 """
+                }
             }
         }
     }
