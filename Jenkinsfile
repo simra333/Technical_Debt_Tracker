@@ -56,6 +56,17 @@ spec:
                 }
             }
         }
+        stage('Push to ACR') {
+            steps {
+                container('docker') {
+                    sh """
+                    az acr login --name ${ACR_NAME}
+                    docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
+                    docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:latest
+                """
+                }
+            }
+        }
     }
 }
 
