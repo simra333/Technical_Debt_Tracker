@@ -7,17 +7,18 @@ kind: Pod
 spec:
     containers:
     - name: docker
-      image: docker:latest
-      command:
-      - cat
-      tty: true
+      image: docker:24-dind
+      securityContext:
+        privileged: true
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
       volumeMounts:
-      - mountPath: /var/run/docker.sock
-        name: docker-sock
+      - name: docker-graph-storage
+        mountPath: /var/lib/docker
     volumes:
-    - name: docker-sock
-      hostPath:
-        path: /var/run/docker.sock
+    - name: docker-graph-storage
+      emptyDir: {}
 '''
         }
     }
