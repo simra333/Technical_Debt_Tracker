@@ -10,9 +10,6 @@ spec:
       image: docker:24-dind
       securityContext:
         privileged: true
-      env:
-        - name: DOCKER_TLS_CERTDIR
-          value: ""
       volumeMounts:
       - name: docker-graph-storage
         mountPath: /var/lib/docker
