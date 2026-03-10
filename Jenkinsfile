@@ -6,16 +6,11 @@ apiVersion: v1
 kind: Pod
 spec:
     containers:
-    - name: docker
-      image: docker:24-dind
-      securityContext:
-        privileged: true
-      volumeMounts:
-      - name: docker-graph-storage
-        mountPath: /var/lib/docker
-    volumes:
-    - name: docker-graph-storage
-      emptyDir: {}
+    - name: azure
+      image: mcr.microsoft.com/azure-cli
+      command:
+      - cat
+      tty: true
 '''
         }
     }
@@ -32,7 +27,7 @@ spec:
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'infrastructure/ci-cd-pipeline', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
+                git branch: 'main', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
             }
         }
         // stage('Run Unit Tests') {
@@ -46,23 +41,17 @@ spec:
         //         '''
         //     }
         // }
-        stage('Build Docker Image') {
+        stage('Build & Push to ACR') {
             steps {
-                container('docker') {
+                container('azure') {
                     sh """
-                    timeout 15 sh -c 'until docker info; do echo .; sleep 1; done'
-                    docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} .
-                """
-                }
-            }
-        }
-        stage('Push to ACR') {
-            steps {
-                container('docker') {
-                    sh """
-                    az acr login --name ${ACR_NAME}
-                    docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:latest
+                    az-login --identity
+
+                    az acr build -registry $ACR_NAME \
+                    --image ${IMAGE_NAME}:${BUILD_NUMBER} \
+                    --image ${IMAGE_NAME}:latest \
+                    --file Dockerfile \
+                    .
                 """
                 }
             }
