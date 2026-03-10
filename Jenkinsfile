@@ -45,7 +45,7 @@ spec:
             steps {
                 container('azure') {
                     sh """
-                    az-login --identity
+                    az login --identity
 
                     az acr build -registry $ACR_NAME \
                     --image ${IMAGE_NAME}:${BUILD_NUMBER} \
