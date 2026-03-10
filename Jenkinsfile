@@ -47,7 +47,7 @@ spec:
                     sh """
                     az login --identity
 
-                    az acr build -registry $ACR_NAME \
+                    az acr build --registry $ACR_NAME \
                     --image ${IMAGE_NAME}:${BUILD_NUMBER} \
                     --image ${IMAGE_NAME}:latest \
                     --file Dockerfile \
