@@ -4,13 +4,22 @@ pipeline {
             yaml '''
 apiVersion: v1
 kind: Pod
+metadata:
+    labels:
+        jenkins: agent
 spec:
+    serviceAccountName: jenkins-agent
     containers:
-    - name: azure
-      image: mcr.microsoft.com/azure-cli
+    - name: azure-cli
+      image: mcr.microsoft.com/azure-cli:latest
       command:
       - cat
       tty: true
+    - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - cat
+        tty: true
 '''
         }
     }
@@ -19,7 +28,11 @@ spec:
         ACR_NAME = 'tdtrackeracr'
         ACR_LOGIN_SERVER = 'tdtrackeracr.azurecr.io'
         IMAGE_NAME = 'technical-debt-tracker'
+        APP_DIR = 'app'
+        NAMESPACE = 'default'
         IMAGE_TAG = "${BUILD_NUMBER}"
+        DEPLOYMENT_NAME = 'tdtracker-deployment'
+        CONTAINER_NAME = 'tdtracker-container'
         AKS_CLUSTER_NAME = 'tdtracker-aks'
         AKS_RESOURCE_GROUP = 'tdtracker-rg'
     }
@@ -43,12 +56,12 @@ spec:
         // }
         stage('Build & Push to ACR') {
             steps {
-                container('azure') {
+                container('azure-cli') {
                     sh '''
                         az login --identity
                         az acr build \
-                        --registry tdtrackeracr \
-                        --image your-app:${BUILD_NUMBER} \
+                        --registry ${ACR_NAME} \
+                        --image ${IMAGE_NAME}:${IMAGE_TAG} \
                         --file Dockerfile \
                         .
                     '''
