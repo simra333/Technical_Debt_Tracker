@@ -61,6 +61,7 @@ spec:
                         az login --identity
                         az account set --subscription 7d7c4617-06a8-4d8b-8dfc-d31d8d7e18eb
                         az account show
+                        az acr list -o table
                         az acr build \
                         --registry ${ACR_NAME} \
                         --image ${IMAGE_NAME}:${IMAGE_TAG} \
