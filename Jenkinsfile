@@ -16,10 +16,10 @@ spec:
       - cat
       tty: true
     - name: kubectl
-        image: bitnami/kubectl:latest
-        command:
-        - cat
-        tty: true
+      image: bitnami/kubectl:latest
+      command:
+      - cat
+      tty: true
 '''
         }
     }
