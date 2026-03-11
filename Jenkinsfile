@@ -61,8 +61,9 @@ spec:
                     az ad signed-in-user show
                     az aks show -g tdtracker-rg -n tdtracker-aks --query identity
                     az aks show -g tdtracker-rg -n tdtracker-aks --query identityProfile        
-                '''}
-
+                '''
+            }
+        }
         stage('Build & Push to ACR') {
             steps {
                 container('azure-cli') {
