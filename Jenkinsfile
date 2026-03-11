@@ -44,27 +44,13 @@ spec:
         stage('Build & Push to ACR') {
             steps {
                 container('azure') {
-                    sh """
-                    az login --identity
-
-                    # Show current subscription
-                    echo "Current subscription:"
-                    az account show --query "{name:name, id:id}" -o table
-
-                    # List all ACRs in subscription
-                    echo "All ACRs in subscription:"
-                    az acr list --query "[].{Name:name, ResourceGroup:resourceGroup}" -o table
-
-                    # Try to show specific ACR
-                    echo "Checking ACR $ACR_NAME:"
-                    az acr show --name $ACR_NAME --query "{name:name, loginServer:loginServer, resourceGroup:resourceGroup}" -o table
-
-                    az acr build --registry $ACR_NAME \
-                    --image ${IMAGE_NAME}:${BUILD_NUMBER} \
-                    --image ${IMAGE_NAME}:latest \
-                    --file Dockerfile \
-                    .
-                """
+                    sh '''
+                        az acr build \
+                        --registry tdtrackeracr \
+                        --image your-app:${BUILD_NUMBER} \
+                        --file Dockerfile \
+                        .
+                    '''
                 }
             }
         }
