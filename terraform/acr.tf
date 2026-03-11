@@ -16,7 +16,7 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
 resource "azurerm_role_assignment" "aks_acr_push" {
   scope                = azurerm_container_registry.acr.id
   role_definition_name = "AcrPush"
-  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
   skip_service_principal_aad_check = true
 }
     
