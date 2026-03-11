@@ -60,6 +60,8 @@ spec:
                 container('azure-cli') {
                     sh '''
                         az login --identity
+                        
+                        az aks show -g tdtracker-rg -n tdtracker-aks --query identity
         
                         echo "=== SIGNED-IN USER ==="
                         az ad signed-in-user show
