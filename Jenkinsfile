@@ -45,6 +45,7 @@ spec:
             steps {
                 container('azure') {
                     sh '''
+                        az login --identity
                         az acr build \
                         --registry tdtrackeracr \
                         --image your-app:${BUILD_NUMBER} \
