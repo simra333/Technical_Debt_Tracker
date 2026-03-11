@@ -8,7 +8,7 @@ metadata:
     labels:
         jenkins: agent
 spec:
-    serviceAccountName: jenkins-agent
+    serviceAccountName: default
     containers:
     - name: azure-cli
       image: mcr.microsoft.com/azure-cli:latest
