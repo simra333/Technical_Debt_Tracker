@@ -55,26 +55,26 @@ spec:
         //     }
         // }
 
-           stage('az login with Managed Identity') {
-            steps {
-                container('azure-cli') {
-                    sh '''
-                        az login --identity
-                        
-                        az aks show -g tdtracker-rg -n tdtracker-aks --query identity
+        //    stage('az login with Managed Identity') {
+        //     steps {
+        //         container('azure-cli') {
+        //             sh '''
+        //                 az login --identity
+
+        //                 az aks show -g tdtracker-rg -n tdtracker-aks --query identity
         
-                        echo "=== SIGNED-IN USER ==="
-                        az ad signed-in-user show
+        //                 echo "=== SIGNED-IN USER ==="
+        //                 az ad signed-in-user show
         
-                        echo "=== AKS IDENTITY (Cluster Identity) ==="
-                        az aks show -g tdtracker-rg -n tdtracker-aks --query identity
+        //                 echo "=== AKS IDENTITY (Cluster Identity) ==="
+        //                 az aks show -g tdtracker-rg -n tdtracker-aks --query identity
         
-                        echo "=== AKS IDENTITY PROFILE (Kubelet / Nodepool MI) ==="
-                        az aks show -g tdtracker-rg -n tdtracker-aks --query identityProfile
-                    '''
-                }
-            }
-        }
+        //                 echo "=== AKS IDENTITY PROFILE (Kubelet / Nodepool MI) ==="
+        //                 az aks show -g tdtracker-rg -n tdtracker-aks --query identityProfile
+        //             '''
+        //         }
+        //     }
+        // }
         stage('Build & Push to ACR') {
             steps {
                 container('azure-cli') {
