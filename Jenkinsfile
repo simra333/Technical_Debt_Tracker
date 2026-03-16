@@ -92,6 +92,15 @@ spec:
                 }
             }
         }
+        stage('Deploy to AKS') {
+            steps {
+                container('azure-cli') {
+                    sh '''
+                        az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
+                    '''
+                }
+            }
+        }
     }
 }
 
