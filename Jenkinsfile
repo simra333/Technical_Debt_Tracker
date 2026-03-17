@@ -96,10 +96,6 @@ spec:
             steps {
                 container('azure-cli') {
                     sh '''
-                        az login --identity
-                        az account set --subscription 7d7c4617-06a8-4d8b-8dfc-d31d8d7e18eb
-                        az account show
-                        az role assignment list --assignee bcc355bb-4c0e-49fe-9355-e8b49151f879 --scope /subscriptions/7d7c4617-06a8-4d8b-8dfc-d31d8d7e18eb -o table
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
                     '''
                 }
