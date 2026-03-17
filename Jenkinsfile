@@ -97,6 +97,17 @@ spec:
                 container('azure-cli') {
                     sh '''
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
+
+                        # Update deployment with new image
+                        kubectl set image deployment/${DEPLOYMENT_NAME} \
+                            ${CONTAINER_NAME}=${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} \
+                            --namespace ${NAMESPACE}
+
+                        # Check rollout status
+                        kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE}
+
+                        # Get service information
+                        kubectl get service --namespace ${NAMESPACE}
                     '''
                 }
             }
