@@ -40,7 +40,7 @@ spec:
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'monitoring', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
+                git branch: 'feature/monitoring', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
             }
         }
         // stage('Run Unit Tests') {
