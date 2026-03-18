@@ -31,8 +31,8 @@ spec:
         APP_DIR = 'app'
         NAMESPACE = 'default'
         IMAGE_TAG = "${BUILD_NUMBER}"
-        DEPLOYMENT_NAME = 'tdtracker-deployment'
-        CONTAINER_NAME = 'tdtracker-container'
+        DEPLOYMENT_NAME = 'tdt-dev'
+        CONTAINER_NAME = 'tdt-dev'
         AKS_CLUSTER_NAME = 'TDT-aks-cluster'
         AKS_RESOURCE_GROUP = 'TDT-RG-Terraform'
     }
