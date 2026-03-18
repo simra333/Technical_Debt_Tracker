@@ -96,6 +96,8 @@ spec:
             steps {
                 container('azure-cli') {
                     sh '''
+                        az login --identity
+                        az aks install-cli
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
 
                         # Update deployment with new image
