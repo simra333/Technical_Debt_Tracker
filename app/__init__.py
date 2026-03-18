@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
+from opencensus.ext.azure.trace_exporter import AzureExporter
+from opencensus.trace.samplers import ProbabilitySampler
 import logging
 import os
 
@@ -25,11 +27,12 @@ def create_app():
     db.init_app(app)                        # Initialise the database with this app
 
     # Request Tracking setup
-    middleware = FlaskMiddleware(
+    FlaskMiddleware(
         app,
-        exporter_options={
-            'connection_string': os.environ['APPLICATIONINSIGHTS_CONNECTION_STRING']
-        }
+        exporter=AzureExporter(
+            connection_string=os.environ['APPLICATIONINSIGHTS_CONNECTION_STRING']
+        ),
+        sampler=ProbabilitySampler(rate=1.0)
     )
 
     from app.routes import api              
