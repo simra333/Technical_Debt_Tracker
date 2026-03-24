@@ -97,6 +97,11 @@ spec:
                     '''
                 }
             }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'trufflehog-report.json', allowEmptyArchive: true
+                }
+            }
         }
         stage('Build & Push to ACR') {
             steps {
