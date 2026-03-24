@@ -17,6 +17,13 @@ spec:
         image: tdt-dev.azurecr.io/tdt-dev:latest
         ports:
         - containerPort: 5000
+
+        env:
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: appinsights-secret
+              key: APPLICATIONINSIGHTS_CONNECTION_STRING
 ---
 apiVersion: v1
 kind: Service
