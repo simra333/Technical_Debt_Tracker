@@ -20,6 +20,11 @@ spec:
       command:
       - cat
       tty: true
+    - name: trufflehog
+      image: trufflesecurity/trufflehog:latest
+      command: 
+      - cat
+      tty: true
 '''
         }
     }
@@ -75,6 +80,24 @@ spec:
         //         }
         //     }
         // }
+        stage('TruffleHog Scan') {
+            steps{
+                container('trufflehog') {
+                    sh '''
+                        echo "Scanning for secrets..."
+                        # TruffleHog automatically scans the Jenkins workspace
+                        trufflehog filesystem . --json > trufflehog-report.json || true
+
+                        if [ -s trufflehog-report.json ]; then
+                            echo "WARNING: Secrets detected!"
+                            cat trufflehog-report.json
+                        else
+                            echo "No secrets detected."
+                        fi
+                    '''
+                }
+            }
+        }
         stage('Build & Push to ACR') {
             steps {
                 container('azure-cli') {
