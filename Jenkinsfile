@@ -25,6 +25,11 @@ spec:
       command: 
       - cat
       tty: true
+    - name: trivy
+      image: aquasec/trivy:latest
+      command:
+      - cat
+      tty: true
 '''
         }
     }
@@ -102,6 +107,29 @@ spec:
                     archiveArtifacts artifacts: 'trufflehog-report.json', allowEmptyArchive: true
                 }
             }
+<<<<<<< HEAD
+=======
+        }
+        stage('Trivy Security Scan') {
+            steps {
+                container('trivy')
+                    sh '''
+                        # Get ACR credentials
+                        export TRIVY_USERNAME=${ACR_NAME}
+                        export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
+
+                        # Scan the image in ACR
+                        trivy image --serverity HIGH,CRITICAL \
+                            --format json \
+                            --output trivy-report.json \
+                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
+
+                        # Display results
+                        trivy image --serverity HIGH,CRITICAL \
+                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
+                    '''
+            }
+>>>>>>> feature/security-tool
         }
         stage('Build & Push to ACR') {
             steps {
@@ -116,6 +144,28 @@ spec:
                         --image ${IMAGE_NAME}:${IMAGE_TAG} \
                         --file Dockerfile \
                         .
+                    '''
+                }
+            }
+        }
+        stage('Trivy Security Scan') {
+            steps {
+                container('azure-cli') {
+                    sh '''
+                        # Login to ACR
+                        az acr login --name ${ACR_NAME}
+
+                        echo "Scanning ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+                        # Run Trivy Scan
+                        trivy image --severity HIGH,CRITICAL \
+                            --format json \
+                            --output trivy-report.json \
+                            ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} || true
+
+                        # Display results
+                        trivy image --severity HIGH,CRITICAL \
+                            ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
