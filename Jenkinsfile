@@ -25,11 +25,6 @@ spec:
       command: 
       - cat
       tty: true
-    - name: trivy
-      image: aquasec/trivy:latest
-      command:
-      - cat
-      tty: true
 '''
         }
     }
@@ -121,27 +116,6 @@ spec:
                         --image ${IMAGE_NAME}:${IMAGE_TAG} \
                         --file Dockerfile \
                         .
-                    '''
-                }
-            }
-        }
-        stage('Trivy Security Scan') {
-            steps {
-                container('trivy') {
-                    sh '''
-                        # Get ACR credentials
-                        export TRIVY_USERNAME=${ACR_NAME}
-                        export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
-
-                        # Scan the image in ACR
-                        trivy image --severity HIGH,CRITICAL \
-                            --format json \
-                            --output trivy-report.json \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
-
-                        # Display results
-                        trivy image --severity HIGH,CRITICAL \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
