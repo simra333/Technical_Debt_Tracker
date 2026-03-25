@@ -110,7 +110,7 @@ spec:
         }
         stage('Trivy Security Scan') {
             steps {
-                container('trivy')
+                container('trivy') {
                     sh '''
                         # Get ACR credentials
                         export TRIVY_USERNAME=${ACR_NAME}
@@ -126,6 +126,7 @@ spec:
                         trivy image --serverity HIGH,CRITICAL \
                             $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
+                }
             }
         }
         stage('Build & Push to ACR') {
