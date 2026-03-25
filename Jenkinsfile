@@ -107,8 +107,6 @@ spec:
                     archiveArtifacts artifacts: 'trufflehog-report.json', allowEmptyArchive: true
                 }
             }
-<<<<<<< HEAD
-=======
         }
         stage('Trivy Security Scan') {
             steps {
@@ -129,7 +127,6 @@ spec:
                             $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
             }
->>>>>>> feature/security-tool
         }
         stage('Build & Push to ACR') {
             steps {
