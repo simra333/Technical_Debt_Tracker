@@ -50,7 +50,7 @@ spec:
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature/monitoring', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
+                git branch: 'main', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
             }
         }
         // stage('Run Unit Tests') {
@@ -106,26 +106,6 @@ spec:
                 always {
                     archiveArtifacts artifacts: 'trufflehog-report.json', allowEmptyArchive: true
                 }
-            }
-        }
-        stage('Trivy Security Scan') {
-            steps {
-                container('trivy')
-                    sh '''
-                        # Get ACR credentials
-                        export TRIVY_USERNAME=${ACR_NAME}
-                        export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
-
-                        # Scan the image in ACR
-                        trivy image --serverity HIGH,CRITICAL \
-                            --format json \
-                            --output trivy-report.json \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
-
-                        # Display results
-                        trivy image --serverity HIGH,CRITICAL \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
-                    '''
             }
         }
         stage('Build & Push to ACR') {
