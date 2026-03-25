@@ -108,27 +108,6 @@ spec:
                 }
             }
         }
-        stage('Trivy Security Scan') {
-            steps {
-                container('trivy') {
-                    sh '''
-                        # Get ACR credentials
-                        export TRIVY_USERNAME=${ACR_NAME}
-                        export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
-
-                        # Scan the image in ACR
-                        trivy image --serverity HIGH,CRITICAL \
-                            --format json \
-                            --output trivy-report.json \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
-
-                        # Display results
-                        trivy image --serverity HIGH,CRITICAL \
-                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
-                    '''
-                }
-            }
-        }
         stage('Build & Push to ACR') {
             steps {
                 container('azure-cli') {
@@ -148,22 +127,21 @@ spec:
         }
         stage('Trivy Security Scan') {
             steps {
-                container('azure-cli') {
+                container('trivy') {
                     sh '''
-                        # Login to ACR
-                        az acr login --name ${ACR_NAME}
+                        # Get ACR credentials
+                        export TRIVY_USERNAME=${ACR_NAME}
+                        export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
 
-                        echo "Scanning ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}"
-
-                        # Run Trivy Scan
-                        trivy image --severity HIGH,CRITICAL \
+                        # Scan the image in ACR
+                        trivy image --serverity HIGH,CRITICAL \
                             --format json \
                             --output trivy-report.json \
-                            ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} || true
+                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
 
                         # Display results
-                        trivy image --severity HIGH,CRITICAL \
-                            ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
+                        trivy image --serverity HIGH,CRITICAL \
+                            $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
             }
