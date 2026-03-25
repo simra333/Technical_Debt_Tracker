@@ -134,13 +134,13 @@ spec:
                         export TRIVY_PASSWORD=$(az acr credential show --name ${ACR_NAME} --query "passwords[0].value" -o tsv)
 
                         # Scan the image in ACR
-                        trivy image --serverity HIGH,CRITICAL \
+                        trivy image --severity HIGH,CRITICAL \
                             --format json \
                             --output trivy-report.json \
                             $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
 
                         # Display results
-                        trivy image --serverity HIGH,CRITICAL \
+                        trivy image --severity HIGH,CRITICAL \
                             $ACR_LOGIN_SERVER/${IMAGE_NAME}:${IMAGE_TAG}
                     '''
                 }
