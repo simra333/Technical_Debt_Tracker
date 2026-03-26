@@ -108,7 +108,6 @@ spec:
                 container('azure-cli') {
                     sh '''
                         az login --identity
-                        az account set --subscription ${AZURE_SUBSCRIPTION_ID}
                         az account show
                         az acr list -o table
                         az acr build \
