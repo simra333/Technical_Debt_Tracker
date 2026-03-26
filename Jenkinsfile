@@ -108,7 +108,7 @@ spec:
                 container('azure-cli') {
                     sh '''
                         az login --identity
-                        az account set --subscription 7d7c4617-06a8-4d8b-8dfc-d31d8d7e18eb
+                        az account set --subscription ${AZURE_SUBSCRIPTION_ID}
                         az account show
                         az acr list -o table
                         az acr build \
@@ -124,7 +124,6 @@ spec:
             steps {
                 container('azure-cli') {
                     sh '''
-                        az login --identity
                         az aks install-cli
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
 
