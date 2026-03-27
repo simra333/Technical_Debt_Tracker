@@ -50,7 +50,7 @@ spec:
         }
         stage('Run Unit Tests') {
             steps {
-                container {
+                container ('python') {
                     sh '''
                         python -m venv venv
                         . venv/bin/activate
