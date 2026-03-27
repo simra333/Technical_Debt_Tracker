@@ -1,0 +1,7 @@
+# Custom image for Jenkins agent with Azure CLI and kubectl installed
+
+FROM mcr.microsoft.com/azure-cli:2.74.0
+
+RUN az aks install-cli --only-show-errors
+
+RUN kubectl version --client

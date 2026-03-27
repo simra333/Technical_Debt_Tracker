@@ -9,16 +9,11 @@ metadata:
         jenkins: agent
 spec:
     serviceAccountName: default
-    containers:
-    - name: azure-cli
-      image: mcr.microsoft.com/azure-cli:latest
-      command:
-      - cat
-      tty: true
-    - name: kubectl
-      image: bitnami/kubectl:latest
-      command:
-      - cat
+    containers: 
+    - name: devops-tools 
+      image: tdtrackeracr.azurecr.io/azure-kubectl:1.0.0 
+      command: 
+      - cat 
       tty: true
     - name: trufflehog
       image: trufflesecurity/trufflehog:latest
