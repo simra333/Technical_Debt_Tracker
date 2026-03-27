@@ -100,7 +100,7 @@ spec:
         }
         stage('Log in to Azure') {
             steps {
-                container(devops-tools) {
+                container('devops-tools') {
                     sh '''
                         az login --identity
                         az account show
