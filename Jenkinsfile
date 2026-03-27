@@ -98,14 +98,16 @@ spec:
                 }
             }
         }
-        stage('Log in to Azure')
+        stage('Log in to Azure') {
             steps {
-                container(devops-tools)
+                container(devops-tools) {
                     sh '''
                         az login --identity
                         az account show
                     '''
+                }
             }
+        }
         stage('Build & Push to ACR') {
             steps {
                 container('devops-tools') {
