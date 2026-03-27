@@ -15,6 +15,11 @@ spec:
       command: 
       - cat 
       tty: true
+    - name: python
+      image: python:3.10-slim
+      command:
+      - cat
+      tty: true
     - name: trufflehog
       image: trufflesecurity/trufflehog:latest
       command: 
@@ -43,17 +48,25 @@ spec:
                 git branch: 'main', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
             }
         }
-        // stage('Run Unit Tests') {
-        //     steps {
-        //         sh '''
-        //             python -m venv venv
-        //             . venv/bin/activate
-        //             pip install -r requirements.txt
-        //             python -m unittest discover -s tests
-        //             sh 'echo Unit Tests completed successfully!'
-        //         '''
-        //     }
-        // }
+        stage('Run Unit Tests') {
+            steps {
+                container {
+                    sh '''
+                        python -m venv venv
+                        . venv/bin/activate
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+
+                        pip install pytest pytest-cov
+
+                            pytest tests/ \
+                            --junitxml=test-results.xml \
+                            --cov=app \
+                            --cov-report=xml
+                    '''
+                }
+            }
+        }
         stage('TruffleHog Scan') {
             steps{
                 container('trufflehog') {
