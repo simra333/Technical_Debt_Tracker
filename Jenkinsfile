@@ -66,7 +66,7 @@ spec:
                             echo "WARNING: Secrets detected!"
                             cat trufflehog-report.json
                         else
-                            echo "No secrets detected."
+                            echo "No secrets detected by TruffleHog Scan."
                         fi
                     '''
                 }
