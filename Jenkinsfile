@@ -118,7 +118,6 @@ spec:
             steps {
                 container('devops-tools') {
                     sh '''
-                        az aks install-cli
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
 
                         # Update deployment with new image
