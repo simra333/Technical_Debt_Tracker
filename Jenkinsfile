@@ -100,7 +100,7 @@ spec:
         }
         stage('Build & Push to ACR') {
             steps {
-                container('azure-cli') {
+                container('devops-tools') {
                     sh '''
                         az login --identity
                         az account show
@@ -116,7 +116,7 @@ spec:
         }
         stage('Deploy to AKS') {
             steps {
-                container('azure-cli') {
+                container('devops-tools') {
                     sh '''
                         az aks install-cli
                         az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
