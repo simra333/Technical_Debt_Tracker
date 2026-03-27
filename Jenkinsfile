@@ -59,7 +59,7 @@ spec:
 
                         pip install pytest pytest-cov
 
-                            pytest tests/ \
+                        pytest tests/ \
                             --junitxml=test-results.xml \
                             --cov=app \
                             --cov-report=xml
