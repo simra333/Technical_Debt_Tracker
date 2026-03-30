@@ -73,7 +73,7 @@ spec:
                     sh '''
                         echo "Scanning for secrets..."
                         # TruffleHog automatically scans the Jenkins workspace
-                        trufflehog filesystem . --json > trufflehog-report.json || true
+                        trufflehog filesystem ${APP_DIR} --json > trufflehog-report.json || true
 
                         if [ -s trufflehog-report.json ]; then
                             echo "WARNING: Secrets detected!"
