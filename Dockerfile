@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM mcr.microsoft.com/devcontainers/python:3.10
 WORKDIR /app
 
 COPY requirements.txt .
