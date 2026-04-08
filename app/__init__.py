@@ -14,6 +14,8 @@ def create_app():
     app=Flask(__name__)
     app.config.from_object(Config)          # Load configuration
 
+    app.secret_key = os.environ.get("SECRET_KEY")
+
     db.init_app(app)                        # Initialise the database with this app
 
     # Logging setup
@@ -37,6 +39,9 @@ def create_app():
 
     from app.routes import api              
     app.register_blueprint(api)
+
+    from app.auth.routes import auth
+    app.register_blueprint(auth)
  
     with app.app_context():                  # Create database tables
         db.create_all()

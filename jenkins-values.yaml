@@ -1,0 +1,16 @@
+controller:
+  serviceType: LoadBalancer
+
+  image:
+    registry: "tdtrackeracr.azurecr.io"
+    repository: "jenkins-controller"
+    tag: "baseline-jdk21-v1.2"
+    pullPolicy: IfNotPresent
+
+  # Explicit: no runtime plugin install
+  installPlugins: []
+  installLatestPlugins: false
+  installLatestSpecifiedPlugins: false
+
+  persistence:
+    enabled: true
