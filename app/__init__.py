@@ -14,7 +14,7 @@ def create_app():
     app=Flask(__name__)
     app.config.from_object(Config)          # Load configuration
 
-    app.secret_key = os.environ.get("SECRET_KEY")
+    app.secret_key = os.environ.get("SECRET_KEY", "dev-only-fallback")  # Set secret key for session management
 
     db.init_app(app)                        # Initialise the database with this app
 

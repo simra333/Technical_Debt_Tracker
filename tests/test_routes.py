@@ -9,6 +9,7 @@ class TestRoutes(unittest.TestCase):
         self.app = create_app()
         self.app.config['TESTING'] = True
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        self.app.config["SECRET_KEY"] = "test-secret-key"
         self.client = self.app.test_client()
 
         with self.app.app_context():
