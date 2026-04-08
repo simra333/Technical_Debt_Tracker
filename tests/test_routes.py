@@ -13,6 +13,10 @@ class TestRoutes(unittest.TestCase):
 
         with self.app.app_context():
             db.create_all()
+
+        # Pretend we are logged in (so @api_login_required passes)
+        with self.client.session_transaction() as sess:
+            sess["user_id"] = 1
         
     def tearDown(self):
         """Clean up test fixtures after each test."""
