@@ -51,19 +51,21 @@ spec:
         stage('Run Unit Tests') {
             steps {
                 container ('python') {
-                    sh '''
-                        python -m venv venv
-                        . venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
+                    withCredentials([string(credentialsId: 'flask-secret-key', variable: 'SECRET_KEY')]) {
+                        sh '''
+                            python -m venv venv
+                            . venv/bin/activate
+                            pip install --upgrade pip
+                            pip install -r requirements.txt
 
-                        pip install pytest pytest-cov
+                            pip install pytest pytest-cov
 
-                        pytest tests/ \
-                            --junitxml=test-results.xml \
-                            --cov=app \
-                            --cov-report=xml
-                    '''
+                            pytest tests/ \
+                                --junitxml=test-results.xml \
+                                --cov=app \
+                                --cov-report=xml
+                        '''
+                    }
                 }
             }
         }
