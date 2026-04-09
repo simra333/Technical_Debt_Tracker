@@ -5,6 +5,19 @@ from app.auth.services import hash_password, verify_password
 
 auth = Blueprint('auth', __name__)
 
+# UI routes for browser-based access
+
+@auth.route('/login', methods=['GET'])
+def login_page():
+    return render_template('login.html')
+
+@auth.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('auth.login_page'))
+
+# API routes for testing purposes (postman)
+
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -27,20 +40,16 @@ def register():
 @auth.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-
     user = User.query.filter_by(username=data['username']).first()
 
     if user and verify_password(data['password'], user.password_hash):
         session['user_id'] = user.id
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'message': 'Login successful'}), 200
     
     return jsonify({'message': 'Invalid username or password'}), 401
 
-@auth.route('/login', methods=['GET'])
-def login_page():
-    return render_template('login.html')
-
-@auth.route('/logout', methods=['POST'])
-def logout():
+@auth.route('/api/logout', methods=['POST'])
+def api_logout():
     session.pop('user_id', None)
-    return redirect(url_for('auth.login_page'))
+    return jsonify({'message': 'Logged out successfully'}), 200
+
