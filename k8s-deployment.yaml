@@ -24,6 +24,12 @@ spec:
             secretKeyRef:
               name: appinsights-secret
               key: APPLICATIONINSIGHTS_CONNECTION_STRING
+
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: flask-secrets
+              key: SECRET_KEY
 ---
 apiVersion: v1
 kind: Service
