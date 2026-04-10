@@ -131,9 +131,7 @@ spec:
                             ${CONTAINER_NAME}=${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} \
                             --namespace ${NAMESPACE}
 
-                        kubectl set env deployment/${DEPLOYMENT_NAME} \
-                        FF_CATEGORY_DROPDOWN=${FF_CATEGORY_DROPDOWN} \
-                        --namespace ${NAMESPACE}
+                        kubectl set env deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE} FF_CATEGORY_DROPDOWN=${FF_CATEGORY_DROPDOWN}
 
                         # Check rollout status
                         kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE}
