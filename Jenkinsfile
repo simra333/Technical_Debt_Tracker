@@ -29,6 +29,10 @@ spec:
         }
     }
 
+    parameters {
+    choice(name: 'FF_CATEGORY_DROPDOWN', choices: ['true', 'false'], description: 'Feature flag: show Category dropdown in UI')
+}
+
     environment {
         ACR_NAME = 'tdtrackeracr'
         ACR_LOGIN_SERVER = 'tdtrackeracr.azurecr.io'
@@ -126,6 +130,10 @@ spec:
                         kubectl set image deployment/${DEPLOYMENT_NAME} \
                             ${CONTAINER_NAME}=${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} \
                             --namespace ${NAMESPACE}
+
+                        kubectl set env deployment/${DEPLOYMENT_NAME} \
+                        FF_CATEGORY_DROPDOWN=${FF_CATEGORY_DROPDOWN} \
+                        --namespace ${NAMESPACE}
 
                         # Check rollout status
                         kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE}

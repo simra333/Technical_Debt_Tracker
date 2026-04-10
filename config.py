@@ -8,4 +8,8 @@ class Config:
         'sqlite:///technical_debt.db')
 
     # Other configurations settings
-    Debug = True
+    DEBBUG = True
+
+    FEATURE_FLAGS = {
+        "CATEGORY_DROPDOWN": os.getenv("FF_CATEGORY_DROPDOWN", "false").lower() == "true"
+    }

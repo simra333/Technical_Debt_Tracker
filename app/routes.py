@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, jsonify, request, render_template
+from flask import Blueprint, abort, jsonify, request, render_template, current_app
 from app import db
 from app.models import TechnicalDebt
 from app.auth.decorators import api_login_required, ui_login_required
@@ -107,8 +107,9 @@ def index():
 @api.route('/add')
 @ui_login_required
 def add_debt_ui():
+    use_category_dropdown = current_app.config['FEATURE_FLAGS'].get('CATEGORY_DROPDOWN', False)
     """Render the page to add a new technical debt item"""
-    return render_template('add.html')
+    return render_template('add.html', use_category_dropdown=use_category_dropdown)
 
 @api.route('/edit/<int:debt_id>')
 @ui_login_required
@@ -118,5 +119,6 @@ def edit_ui(debt_id):
     debt_item = db.session.get(TechnicalDebt, debt_id)
     if not debt_item:
         return "Debt item not found", 404
-    return render_template('edit.html', debt_id=debt_id, debt_item=debt_item)
+    use_category_dropdown = current_app.config['FEATURE_FLAGS'].get('CATEGORY_DROPDOWN', False)
+    return render_template('edit.html', debt_id=debt_id, debt_item=debt_item, use_category_dropdown=use_category_dropdown)
     
