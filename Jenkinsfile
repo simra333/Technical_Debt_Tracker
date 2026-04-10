@@ -73,6 +73,30 @@ spec:
                 }
             }
         }
+        stage('Dependency Vulnerability Scan') {
+            steps {
+                container('python') {
+                    sh '''
+                        echo "Running dependency vulnerability scan..."
+                        . venv/bin/activate
+                        pip install pip-audit
+                        pip-audit -r requirements.txt -f json > pip-audit-report.json || true
+
+                        if [ -s pip-audit-report.json ]; then
+                            echo "Vulnerabilities found:"
+                            cat pip-audit-report.json
+                        else
+                            echo "No known vulnerabilities found."
+                        fi
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'pip-audit-report.json', allowEmptyArchive: true
+                }
+            }
+        }
         stage('TruffleHog Scan') {
             steps{
                 container('trufflehog') {
