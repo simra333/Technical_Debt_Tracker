@@ -80,7 +80,7 @@ spec:
                         echo "Running dependency vulnerability scan..."
                         . venv/bin/activate
                         pip install pip-audit
-                        pip-audit -r requirements.txt -f json > pip-audit-report.json || true
+                        pip-audit -r requirements.txt > pip-audit-report.json || true
 
                         if [ -s pip-audit-report.json ]; then
                             echo "Vulnerabilities found:"
@@ -88,6 +88,12 @@ spec:
                         else
                             echo "No known vulnerabilities found."
                         fi
+
+                        echo ""
+                        echo "=== Suggested Fixes (Dry Run) ==="
+
+                        # Show what would be fixed (no changes applied)
+                        pip-audit -r requirements.txt --fix --dry-run || true
                     '''
                 }
             }
