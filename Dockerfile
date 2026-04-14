@@ -1,4 +1,8 @@
-FROM mcr.microsoft.com/devcontainers/python:3.10
+FROM python:3.10-slim
+
+# Create non-root user 
+RUN useradd -m appuser
+
 WORKDIR /app
 
 COPY requirements.txt .
@@ -13,5 +17,10 @@ RUN /opt/venv/bin/pip install -r requirements.txt
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
+
+# Switch to non-root user
+USER appuser
+
 EXPOSE 5000
+
 CMD ["python", "main.py"]

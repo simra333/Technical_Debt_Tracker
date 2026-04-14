@@ -21,6 +21,8 @@ def logout():
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({'message': 'Invalid input'}), 400
 
     # Check if user already exists
     if User.query.filter_by(username=data['username']).first():
