@@ -78,14 +78,9 @@ spec:
                         echo "Running dependency vulnerability scan..."
                         . venv/bin/activate
                         pip install pip-audit
-                        pip-audit -r requirements.txt > pip-audit-report.json || true
+                        pip-audit -r requirements.txt --strict -f json -o pip-audit-report.json
 
-                        if [ -s pip-audit-report.json ]; then
-                            echo "Vulnerabilities found:"
-                            cat pip-audit-report.json
-                        else
-                            echo "No known vulnerabilities found."
-                        fi
+                        echo "No known vulnerabilities found"
 
                         echo ""
                         echo "=== Suggested Fixes (Dry Run) ==="
@@ -106,12 +101,13 @@ spec:
                 container('trufflehog') {
                     sh '''
                         echo "Scanning for secrets..."
-                        # TruffleHog automatically scans the Jenkins workspace
-                        trufflehog filesystem ${APP_DIR} --json > trufflehog-report.json || true
+                        
+                        trufflehog filesystem ${APP_DIR} --json > trufflehog-report.json 
 
                         if [ -s trufflehog-report.json ]; then
                             echo "WARNING: Secrets detected!"
                             cat trufflehog-report.json
+                            exit 1
                         else
                             echo "No secrets detected by TruffleHog Scan."
                         fi
