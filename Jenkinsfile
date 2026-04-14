@@ -101,7 +101,7 @@ spec:
                 container('trufflehog') {
                     sh '''
                         echo "Scanning for secrets..."
-                        
+
                         trufflehog filesystem ${APP_DIR} --json > trufflehog-report.json 
 
                         if [ -s trufflehog-report.json ]; then
@@ -136,6 +136,7 @@ spec:
                     sh '''
                         az acr list -o table
                         az acr build \
+                        --no-cache \
                         --registry ${ACR_NAME} \
                         --image ${IMAGE_NAME}:${IMAGE_TAG} \
                         --file Dockerfile \
