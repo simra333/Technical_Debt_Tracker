@@ -2,13 +2,12 @@ import unittest
 from app import create_app, db
 from app.models import TechnicalDebt
 from datetime import datetime
+from config import TestConfig
 
 class TestTechnicalDebtModel(unittest.TestCase):
     def setUp(self): 
         """Set up a test fixture before each test."""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()

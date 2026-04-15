@@ -13,3 +13,7 @@ class Config:
     FEATURE_FLAGS = {
         "CATEGORY_DROPDOWN": os.getenv("FF_CATEGORY_DROPDOWN", "false").lower() == "true"
     }
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'

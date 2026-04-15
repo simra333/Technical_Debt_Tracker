@@ -7,9 +7,9 @@ import os
 
 db = SQLAlchemy()                           # Create the database object
 
-def create_app():
+def create_app(config_class=Config):
     app=Flask(__name__)
-    app.config.from_object(Config)          # Load configuration
+    app.config.from_object(config_class)          # Load configuration
 
     app.secret_key = os.environ.get("SECRET_KEY", "dev-only-fallback")  # Set secret key for session management
 
