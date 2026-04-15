@@ -75,6 +75,7 @@ spec:
             steps {
                 container('python') {
                     sh '''
+                        set -e
                         echo "Running dependency vulnerability scan..."
                         . venv/bin/activate
                         pip install pip-audit
