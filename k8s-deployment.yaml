@@ -15,26 +15,34 @@ metadata:
   name: tdt-dev
 spec:
   replicas: 1
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+
   selector:
     matchLabels:
       app: tdt-dev
+
   template:
     metadata:
       labels:
         app: tdt-dev
+
     spec:
       securityContext:
+        runAsUser: 1000
         fsGroup: 1000
 
       containers:
       - name: tdt-dev
-        image: tdtrackeracr.azurecr.io/technical-debt-tracker:latest
+        image: tdtrackeracr.azurecr.io/technical-debt-tracker:21
         imagePullPolicy: Always
+        
         ports:
         - containerPort: 5000
-
-        securityContext:
-          runAsUser: 1000
 
         env:
         - name: APPLICATIONINSIGHTS_CONNECTION_STRING
