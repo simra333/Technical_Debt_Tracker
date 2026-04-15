@@ -1,9 +1,8 @@
-from flask import Blueprint, request, jsonify, session, render_template, redirect, url_for
+from flask import request, jsonify, session, render_template, redirect, url_for
 from app.models import User
 from app import db
 from app.auth.services import hash_password, verify_password
-
-auth = Blueprint('auth', __name__)
+from app.auth import auth
 
 # UI routes for browser-based access
 
