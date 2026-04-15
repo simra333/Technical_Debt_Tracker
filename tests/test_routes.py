@@ -2,14 +2,12 @@ import unittest
 import json
 from app import create_app, db
 from app.models import TechnicalDebt
+from config import TestConfig
 
 class TestRoutes(unittest.TestCase):
     def setUp(self):
         """Set up a test fixture before each test."""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
-        self.app.config["SECRET_KEY"] = "test-secret-key"
+        self.app = create_app(TestConfig)
         self.client = self.app.test_client()
 
         with self.app.app_context():
