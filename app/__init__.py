@@ -25,8 +25,9 @@ def setup_monitoring():
 
     configure_azure_monitor(
         connection_string=connection_string,
-        logger_name=""
     )
+
+    logging.getLogger().setLevel(logging.INFO)
     
     logger.info("Azure Monitor configured successfully")
 
