@@ -23,7 +23,11 @@ def setup_monitoring():
         logger.warning("Azure Monitor NOT configured (missing connection string)")
         return
 
-    configure_azure_monitor(connection_string=connection_string)
+    configure_azure_monitor(
+        connection_string=connection_string,
+        logger_name=""
+    )
+    
     logger.info("Azure Monitor configured successfully")
 
 
