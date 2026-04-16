@@ -1,5 +1,5 @@
 from flask import Blueprint, abort, jsonify, request, render_template, current_app
-from app import db
+from app import db, logger
 from app.models import TechnicalDebt
 from app.auth.decorators import api_login_required, ui_login_required
 
@@ -38,18 +38,31 @@ def create_debt():
     """ Create a new techical debt item"""
     data = request.get_json()
 
-    new_debt = TechnicalDebt(
-        title=data['title'],
-        description=data['description'],
-        risk=data['risk'],
-        effort_estimate=data['effort_estimate'],
-        status=data.get('status', 'Open'),
-        assigned_to=data.get('assigned_to')
-    )
+    logger.info("POST /api/debts called")
+    logger.info(f"incoming data: {data}")
 
-    db.session.add(new_debt)
-    db.session.commit()
-    return jsonify(new_debt.to_dict()), 201
+    try:
+        new_debt = TechnicalDebt(
+            title=data['title'],
+            description=data['description'],
+            risk=data['risk'],
+            effort_estimate=data['effort_estimate'],
+            status=data.get('status', 'Open'),
+            assigned_to=data.get('assigned_to')
+        )
+
+        logger.info(f"Creating technical debt item: {data.get('title')}")
+
+        db.session.add(new_debt)
+        db.session.commit()
+
+        logger.info(f"Technical debt item created successfully with ID: {new_debt.id}")
+
+        return jsonify(new_debt.to_dict()), 201
+    
+    except Exception as e:
+        logger.exception("Error creating technical debt item")
+        return jsonify({"error": "Failed to create technical debt item"}), 500
 
 @api.route('/api/debts/<int:debt_id>', methods=['PUT']) 
 @api_login_required

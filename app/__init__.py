@@ -7,19 +7,36 @@ import os
 
 db = SQLAlchemy()                           # Create the database object
 
+# Logging setup
+logger = logging.getLogger(__name__)
+
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s"
+    )
+
+def setup_monitoring():
+    connection_string = os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING')
+
+    if not connection_string:
+        logger.warning("Azure Monitor NOT configured (missing connection string)")
+        return
+
+    configure_azure_monitor(connection_string=connection_string)
+    logger.info("Azure Monitor configured successfully")
+
+
 def create_app(config_class=Config):
+    setup_logging()                        
+    setup_monitoring()                      
+
     app=Flask(__name__)
     app.config.from_object(config_class)          # Load configuration
 
     app.secret_key = os.environ.get("SECRET_KEY", "dev-only-fallback")  # Set secret key for session management
 
     db.init_app(app)                        # Initialise the database with this app
-
-    # Logging setup
-    connection_string = os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING')
-    if connection_string:
-        configure_azure_monitor(connection_string=connection_string)
-        logging.info("Azure Monitor configured successfully.")
         
     from app.routes import api              
     app.register_blueprint(api)
