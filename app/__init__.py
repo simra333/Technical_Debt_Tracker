@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry.instrumentation.logging import LoggingInstrumentor
 import logging
 import os
 
@@ -27,8 +28,9 @@ def setup_monitoring():
         connection_string=connection_string,
     )
 
-    logging.getLogger().setLevel(logging.INFO)
-    
+    # logging.getLogger().setLevel(logging.INFO)
+
+    LoggingInstrumentor().instrument(set_logging_format=False)
     logger.info("Azure Monitor configured successfully")
 
 
