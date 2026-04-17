@@ -44,6 +44,7 @@ spec:
         CONTAINER_NAME = 'tdt-dev'
         AKS_CLUSTER_NAME = 'TDT-aks-cluster'
         AKS_RESOURCE_GROUP = 'TDT-RG-Terraform'
+        SERVICE_NAME = 'tdt-dev-service'
     }
 
     stages {
@@ -163,6 +164,23 @@ spec:
 
                         # Get service information
                         kubectl get service --namespace ${NAMESPACE}
+                    '''
+                }
+            }
+        }
+        stage('Post-Deployment Test') {
+            steps {
+                container('devops-tools') {
+                    sh '''
+                        set -e
+
+                        echo "Running post-deployment tests..."
+
+                        APP_IP=$(kubectl get svc ${SERVICE_NAME} -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                        echo "Service external IP: ${APP_IP}"
+
+                        curl -fsS "http://${APP_IP}/api/debts" > /dev/null
+                        echo "Post-deployment tests passed successfully - /api/debts is reachable."
                     '''
                 }
             }
