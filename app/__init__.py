@@ -4,6 +4,8 @@ from config import Config
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry import trace 
 import logging
 import os
 
@@ -24,13 +26,18 @@ def setup_monitoring():
     if not connection_string:
         logger.warning("Azure Monitor NOT configured (missing connection string)")
         return
+    
+    resource = Resource(attributes={
+        "service.name": "Technical-Debt-Tracker"
+    })
 
     configure_azure_monitor(
         connection_string=connection_string,
-        service_name="Technical-Debt-Tracker",
+        resource=resource
     )
 
     LoggingInstrumentor().instrument(set_logging_format=False)
+    
     logger.info("Azure Monitor configured successfully")
 
 def create_app(config_class=Config):
