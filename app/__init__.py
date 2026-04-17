@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 import logging
 import os
 
@@ -26,24 +27,25 @@ def setup_monitoring():
 
     configure_azure_monitor(
         connection_string=connection_string,
+        service_name="Technical-Debt-Tracker",
     )
-
-    # logging.getLogger().setLevel(logging.INFO)
 
     LoggingInstrumentor().instrument(set_logging_format=False)
     logger.info("Azure Monitor configured successfully")
 
-
 def create_app(config_class=Config):
-    setup_logging()                        
-    setup_monitoring()                      
+    setup_logging()                                              
 
     app=Flask(__name__)
     app.config.from_object(config_class)          # Load configuration
 
+    setup_monitoring()
+
     app.secret_key = os.environ.get("SECRET_KEY", "dev-only-fallback")  # Set secret key for session management
 
     db.init_app(app)                        # Initialise the database with this app
+
+    FlaskInstrumentor().instrument_app(app)
         
     from app.routes import api              
     app.register_blueprint(api)
