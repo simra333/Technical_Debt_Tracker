@@ -77,7 +77,7 @@ def create_debt():
     
     except Exception as e:
         logger.exception("Error creating technical debt item")
-        return jsonify({"error": "Failed to create technical debt item"}), 500
+        return jsonify({"error": "Failed to create technical debt item"}), 400
 
 @api.route('/api/debts/<int:debt_id>', methods=['PUT']) 
 @api_login_required
