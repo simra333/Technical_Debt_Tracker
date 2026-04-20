@@ -6,6 +6,10 @@ from app.auth.decorators import api_login_required, ui_login_required
 # Create a blueprint or use current_app for route definitions
 api=Blueprint('api', __name__)
 
+@api.route('/health', methods=['GET'])
+def health():
+    return jsonify({"status": "healthy"}), 200
+
 # API Routes (return JSON data)
 @api.route('/api/debts', methods=['GET']) 
 @api_login_required
