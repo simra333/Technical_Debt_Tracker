@@ -8,7 +8,14 @@ api=Blueprint('api', __name__)
 
 @api.route('/health', methods=['GET'])
 def health():
-    return jsonify({"status": "healthy"}), 200
+    try: 
+        # Check database connectivity by executing a simple query
+        db.session.execute('SELECT 1')  
+        return {"status": "healthy"}, 200
+    except Exception as e:
+        logger.exception("Health check failed")
+        return {"status": "unhealthy", "error": str(e)}, 500
+    
 
 # API Routes (return JSON data)
 @api.route('/api/debts', methods=['GET']) 
