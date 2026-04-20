@@ -1,4 +1,5 @@
 from flask import Blueprint, abort, jsonify, request, render_template, current_app
+from sqlalchemy import text
 from app import db, logger
 from app.models import TechnicalDebt
 from app.auth.decorators import api_login_required, ui_login_required
@@ -10,8 +11,11 @@ api=Blueprint('api', __name__)
 def health():
     try: 
         # Check database connectivity by executing a simple query
-        db.session.execute('SELECT 1')  
-        return {"status": "healthy"}, 200
+        db.session.execute(text('SELECT 1'))  
+        return {
+            "status": "healthy",
+            "database": "connected"
+        }, 200
     except Exception as e:
         logger.exception("Health check failed")
         return {"status": "unhealthy", "error": str(e)}, 500
