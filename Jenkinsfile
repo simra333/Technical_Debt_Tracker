@@ -179,7 +179,7 @@ spec:
                         APP_IP=$(kubectl get svc ${SERVICE_NAME} -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
                         echo "Service external IP: ${APP_IP}"
 
-                        curl -fsS "http://${APP_IP}/health" > /dev/null
+                        curl -fsS http://${APP_IP}/health
                         echo "Post-deployment tests passed successfully - /health is reachable."
                     '''
                 }
