@@ -57,7 +57,7 @@ def create_debt():
     logger.info(f"incoming data: {data}")
 
     if not data.get('title'):
-        logger.warning(f"Validation error: Missing title. Payload: {data}")
+        logger.warning("metric=debt_creation_failed count=1 reason=missing_title")
         return jsonify({"error": "Title is required"}), 400
 
     try:
