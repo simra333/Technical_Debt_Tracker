@@ -56,6 +56,10 @@ def create_debt():
     logger.info("POST /api/debts called")
     logger.info(f"incoming data: {data}")
 
+    if not data.get('title'):
+        logger.warning(f"Validation error: Missing title. Payload: {data}")
+        return jsonify({"error": "Title is required"}), 400
+
     try:
         new_debt = TechnicalDebt(
             title=data['title'],
@@ -66,18 +70,19 @@ def create_debt():
             assigned_to=data.get('assigned_to')
         )
 
-        logger.info(f"Creating technical debt item: {data.get('title')}")
-
         db.session.add(new_debt)
         db.session.commit()
 
         logger.info(f"Technical debt item created successfully with ID: {new_debt.id}")
+        logger.info(f"metric=debt_created risk={new_debt.risk}")
+        
+        logger.warning("metric=debt_creation_failed count=1 reason=validation_error")
 
         return jsonify(new_debt.to_dict()), 201
     
     except Exception as e:
         logger.exception("Error creating technical debt item")
-        return jsonify({"error": "Failed to create technical debt item"}), 400
+        return jsonify({"error": "Internal Server Error"}), 500
 
 @api.route('/api/debts/<int:debt_id>', methods=['PUT']) 
 @api_login_required
