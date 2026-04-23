@@ -54,7 +54,6 @@ def create_debt():
     data = request.get_json()
 
     logger.info("POST /api/debts called")
-    logger.info(f"incoming data: {data}")
 
     if not data.get('title'):
         logger.warning("metric=debt_creation_failed count=1 reason=missing_title")
@@ -73,10 +72,7 @@ def create_debt():
         db.session.add(new_debt)
         db.session.commit()
 
-        logger.info(f"Technical debt item created successfully with ID: {new_debt.id}")
         logger.info(f"metric=debt_created risk={new_debt.risk}")
-        
-        logger.warning("metric=debt_creation_failed count=1 reason=validation_error")
 
         return jsonify(new_debt.to_dict()), 201
     
