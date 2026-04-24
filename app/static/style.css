@@ -46,3 +46,53 @@ button:hover {
     border-radius: 5px;
     border-left: 4px solid #007bff;
 }
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 140px;
+    background: #1f2937;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 8px;
+}
+
+.sidebar button,
+.logout-button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #374151;
+    color: white;
+    text-align: left;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.sidebar button:hover,
+.logout-button:hover {
+    background: #4b5563;
+}
+
+.sidebar form {
+    background: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 24px;
+    background: #f3f4f6;
+}

@@ -5,14 +5,29 @@
     <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 <body>
-    <h1>Technical Debt Items</h1>
-    <a href="/add">Add New Item</a>
-    <ul id="debt-list">
-        <!-- JavaScript to fetch and display technical debt items here -->
-    </ul>
-    <form action="/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
+    <div class="layout">
+        <aside class="sidebar">
+            <h2>Debt Tracker</h2>
+
+            <nav>
+                <button type="button" onclick="window.location.href='/'">Dashboard</button>
+                <button type="button" onclick="window.location.href='/add'">Add New Item</button>
+            </nav>
+
+            <form action="/logout" method="POST">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </aside>
+
+        <main class="main-content">
+            <h1>Technical Debt Items</h1>
+
+            <ul id="debt-list">
+                <!-- JavaScript to fetch and display technical debt items here -->
+            </ul>
+        </main>
+    </div>
+
     <script src="/static/index.js"></script>
 </body>
 </html>

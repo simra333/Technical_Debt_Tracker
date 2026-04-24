@@ -1,11 +1,14 @@
 const debtId = document.getElementById('debt-id').value;
 
+const categoryInput = document.getElementById('category') || document.getElementById('category_text');
+
 // Load existing data
 fetch(`/api/debts/${debtId}`)
     .then(response => response.json())
     .then(debt => {
         document.getElementById('title').value = debt.title;
         document.getElementById('description').value = debt.description;
+        categoryInput.value = debt.category;
         document.getElementById('risk').value = debt.risk;
         document.getElementById('effort_estimate').value = debt.effort_estimate;
         document.getElementById('status').value = debt.status;
@@ -23,6 +26,7 @@ document.getElementById('edit-form').addEventListener('submit', function(event) 
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
+        category: categoryInput.value,
         risk: document.getElementById('risk').value,
         effort_estimate: document.getElementById('effort_estimate').value,
         status: document.getElementById('status').value,

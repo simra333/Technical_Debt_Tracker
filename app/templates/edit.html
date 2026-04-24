@@ -19,6 +19,22 @@
             <textarea id="description" name="description" required>{{debt_item.description}}</textarea>
             <br><br>
 
+            {% if use_category_dropdown %}
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="Architectural Debt" {% if debt_item.category == 'Architectural Debt' %}selected{% endif %}>Architectural Debt</option>
+                <option value="Implementation Debt" {% if debt_item.category == 'Implementation Debt' %}selected{% endif %}>Implementation Debt</option>
+                <option value="Documentation Debt" {% if debt_item.category == 'Documentation Debt' %}selected{% endif %}>Documentation Debt</option>
+                <option value="Other" {% if debt_item.category == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+            {% else %}
+            <!-- flag OFF: keep old behaviour -->
+            <label for="category_text">Category</label>
+            <input type="text" id="category_text" name="category" required>
+            {% endif %}
+
+            <br><br>
+
             <label for ="risk">Risk</label>
             <input type="number" id="risk" name="risk" value="{{debt_item.risk}}" required>
             <br><br>
