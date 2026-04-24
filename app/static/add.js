@@ -1,9 +1,12 @@
 document.getElementById('add-debt-item').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
 
+    const categoryInput = document.getElementById('category') || document.getElementById('category_text');
+
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
+        category: categoryInput.value,
         risk: document.getElementById('risk').value,
         effort_estimate: document.getElementById('effort_estimate').value,
         status: document.getElementById('status').value,

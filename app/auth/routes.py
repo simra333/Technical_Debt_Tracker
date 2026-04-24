@@ -41,8 +41,11 @@ def register():
 @auth.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data or 'username' not in data or 'password' not in data:
+        return jsonify({'message': 'Invalid input'}), 400
     user = User.query.filter_by(username=data['username']).first()
 
+    # verify username and password
     if user and verify_password(data['password'], user.password_hash):
         session['user_id'] = user.id
         return jsonify({'message': 'Login successful'}), 200
