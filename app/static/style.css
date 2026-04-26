@@ -1,29 +1,14 @@
+/* General */
+
 body {
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
-    max-width: 800px;
+    font-family: Inter, Arial, sans-serif;
+    max-width: 1800px;
     margin: 0 auto;
     padding: 20px;
 }
 
-h1 {
-    color: #333;
-}
-
-form {
-    background: #f4f4f4;
-    padding: 20px;
-    border-radius: 5px;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 8px;
-    margin: 5px 0;
-    box-sizing: border-box;
-}
-
 button {
-    background: #007bff;
+    background: #2A4386;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -32,7 +17,42 @@ button {
 }
 
 button:hover {
-    background: #0056b3;
+    background: #FFB211;
+}
+
+
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Login Screen */
+
+.login-title {
+    text-align: center;
+    color: #2A4386;
+}
+
+.login-form {
+    max-width: 400px;
+    margin: 20px auto 80px auto;
+    background: #f4f4f4;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.logo {
+    display: block;
+    width: 120px;
+    height: auto;
+    margin: 40px auto 10px auto;
+}
+
+/* Home Screen */
+
+h1 {
+    color: #2A4386;
 }
 
 #debt-list {
@@ -44,25 +64,20 @@ button:hover {
     margin: 10px 0;
     padding: 15px;
     border-radius: 5px;
-    border-left: 4px solid #007bff;
-}
-
-.layout {
-    display: flex;
-    min-height: 100vh;
+    border-left: 4px solid #2A4386;
 }
 
 .sidebar {
-    width: 140px;
-    background: #1f2937;
-    color: white;
+    width: 200px;
+    background: #F8F8F8;
+    color: #2a4385;
     padding: 20px;
 }
 
 .sidebar h2 {
     margin-top: 0;
     margin-bottom: 20px;
-    font-size: 8px;
+    font-size: 25px;
 }
 
 .sidebar button,
@@ -91,8 +106,34 @@ button:hover {
     margin-top: 20px;
 }
 
+.sidebar-logo {
+    display: block;
+    width: 60px;
+    height: auto;
+    margin: 0 auto 12px auto;
+}
+
 .main-content {
     flex: 1;
     padding: 24px;
     background: #f3f4f6;
+    font-size: 15px;
 }
+
+/* Form Screen */
+
+form {
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    box-sizing: border-box;
+}
+
+
+
