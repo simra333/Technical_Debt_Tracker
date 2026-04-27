@@ -5,7 +5,6 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.sdk.resources import Resource
-from opentelemetry import trace 
 import logging
 import os
 

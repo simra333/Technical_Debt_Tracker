@@ -49,6 +49,18 @@ button:hover {
     margin: 40px auto 10px auto;
 }
 
+.login-container {
+	max-width: 360px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#error {
+	color: red;
+	margin-top: 12px;
+	text-align: center;
+}
+
 /* Home Screen */
 
 h1 {

@@ -23,8 +23,9 @@ class TestTechnicalDebtModel(unittest.TestCase):
         debt = TechnicalDebt(
             title="Test Debt 1",
             description="This is a test item",
-            risk="High",
-            effort_estimate="Medium",
+            category="Architectural Debt",
+            risk=5,
+            effort_estimate=3,
             status="Open",
             assigned_to="Alice",
             created_at=datetime.now()
@@ -37,8 +38,9 @@ class TestTechnicalDebtModel(unittest.TestCase):
         self.assertIsNotNone(saved)
         self.assertEqual(saved.title, "Test Debt 1")
         self.assertEqual(saved.description, "This is a test item")
-        self.assertEqual(saved.risk, "High")
-        self.assertEqual(saved.effort_estimate, "Medium")
+        self.assertEqual(saved.category, "Architectural Debt")
+        self.assertEqual(saved.risk, 5)
+        self.assertEqual(saved.effort_estimate, 3)
         self.assertEqual(saved.status, "Open")
         self.assertEqual(saved.assigned_to, "Alice")
         self.assertIsInstance(saved.created_at, datetime)

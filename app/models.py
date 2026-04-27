@@ -8,8 +8,9 @@ class TechnicalDebt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    risk = db.Column(db.String(50), nullable=False)
-    effort_estimate = db.Column(db.String(50), nullable=False)
+    category = db.Column(db.String(100), nullable=False, default="Other")
+    risk = db.Column(db.Integer, nullable=False)
+    effort_estimate = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(50), nullable=False, default='Open')
     assigned_to = db.Column(db.String(100), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
@@ -22,6 +23,7 @@ class TechnicalDebt(db.Model):
             'id': self.id,
             'title': self.title,
             'description': self.description,
+            'category': self.category,
             'risk': self.risk,
             'effort_estimate': self.effort_estimate,
             'status': self.status,

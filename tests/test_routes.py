@@ -13,7 +13,7 @@ class TestRoutes(unittest.TestCase):
         with self.app.app_context():
             db.create_all()
 
-        # Pretend we are logged in (so @api_login_required passes)
+        # Simulate a logged-in user (so @api_login_required passes)
         with self.client.session_transaction() as sess:
             sess["user_id"] = 1
         
@@ -29,8 +29,9 @@ class TestRoutes(unittest.TestCase):
         debt_data = {
             "title": "Test Debt 1",
             "description": "This is a test item",
-            "risk": "High",
-            "effort_estimate": "Medium",
+            "category": "Architectural Debt",
+            "risk": 5,
+            "effort_estimate": 3,
             "status": "Open",
             "assigned_to": "Alice"
         }
@@ -48,8 +49,9 @@ class TestRoutes(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(data['title'], 'Test Debt 1')
         self.assertEqual(data['description'], 'This is a test item')
-        self.assertEqual(data['risk'], 'High')
-        self.assertEqual(data['effort_estimate'], 'Medium')
+        self.assertEqual(data['category'], 'Architectural Debt')
+        self.assertEqual(data['risk'], 5)
+        self.assertEqual(data['effort_estimate'], 3)
         self.assertEqual(data['status'], 'Open')
         self.assertEqual(data['assigned_to'], 'Alice')
 
@@ -61,16 +63,18 @@ class TestRoutes(unittest.TestCase):
             debt1 = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )
             debt2 = TechnicalDebt(
                 title="Test Debt 2",
                 description="This is another test item",
-                risk="Medium",
-                effort_estimate="Low",
+                category="Architectural Debt",
+                risk=3,
+                effort_estimate=1,
                 status="Open",
                 assigned_to="Bob"
             )
@@ -93,8 +97,9 @@ class TestRoutes(unittest.TestCase):
             debt = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )
@@ -106,9 +111,10 @@ class TestRoutes(unittest.TestCase):
             updated_data = {
                 "title": "Updated Test Debt 1",
                 "description": "This is an updated test item",
-                "risk": "Low",
-                "effort_estimate": "Low",
-                "status": "Closed",
+                "category": "Architectural Debt",
+                "risk": 1,
+                "effort_estimate": 1,
+                "status": "Resolved",
                 "assigned_to": "Bob"
             }
             
@@ -124,19 +130,21 @@ class TestRoutes(unittest.TestCase):
             data = json.loads(response.data)
             self.assertEqual(data['title'], 'Updated Test Debt 1')
             self.assertEqual(data['description'], 'This is an updated test item')
-            self.assertEqual(data['risk'], 'Low')
-            self.assertEqual(data['effort_estimate'], 'Low')
-            self.assertEqual(data['status'], 'Closed')
+            self.assertEqual(data['category'], 'Architectural Debt')
+            self.assertEqual(data['risk'], 1)
+            self.assertEqual(data['effort_estimate'], 1)
+            self.assertEqual(data['status'], 'Resolved')
             self.assertEqual(data['assigned_to'], 'Bob')
 
             # Verify the item was updated in the database
             with self.app.app_context():
                 updated_debt = db.session.get(TechnicalDebt, debt_id)
                 self.assertEqual(updated_debt.title, 'Updated Test Debt 1')
-                self.assertEqual(updated_debt.description, 'This is an updated test item')      
-                self.assertEqual(updated_debt.risk, 'Low')
-                self.assertEqual(updated_debt.effort_estimate, 'Low')
-                self.assertEqual(updated_debt.status, 'Closed')
+                self.assertEqual(updated_debt.description, 'This is an updated test item')
+                self.assertEqual(updated_debt.category, 'Architectural Debt')      
+                self.assertEqual(updated_debt.risk, 1)
+                self.assertEqual(updated_debt.effort_estimate, 1)
+                self.assertEqual(updated_debt.status, 'Resolved')
                 self.assertEqual(updated_debt.assigned_to, 'Bob')
 
     def test_delete_debt(self):
@@ -146,8 +154,9 @@ class TestRoutes(unittest.TestCase):
             debt = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )

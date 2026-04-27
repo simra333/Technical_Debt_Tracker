@@ -63,8 +63,9 @@ def create_debt():
         new_debt = TechnicalDebt(
             title=data['title'],
             description=data['description'],
-            risk=data['risk'],
-            effort_estimate=data['effort_estimate'],
+            category=data.get('category', 'Other'),
+            risk=int(data['risk']),
+            effort_estimate=int(data['effort_estimate']),
             status=data.get('status', 'Open'),
             assigned_to=data.get('assigned_to')
         )
@@ -93,10 +94,12 @@ def update_debt(debt_id):
         debt.title = data['title']
     if 'description' in data:
         debt.description = data['description']
+    if 'category' in data:
+        debt.category = data['category']
     if 'risk' in data:
-        debt.risk = data['risk']
+        debt.risk = int(data['risk'])
     if 'effort_estimate' in data:
-        debt.effort_estimate = data['effort_estimate']
+        debt.effort_estimate = int(data['effort_estimate'])
     if 'status' in data:
         debt.status = data['status']
     if 'assigned_to' in data:
@@ -107,6 +110,7 @@ def update_debt(debt_id):
         'id': debt.id,
         'title': debt.title,
         'description': debt.description,
+        'category': debt.category,
         'risk': debt.risk,
         'effort_estimate': debt.effort_estimate,
         'status': debt.status,
@@ -136,8 +140,8 @@ def index():
 @api.route('/add')
 @ui_login_required
 def add_debt_ui():
-    use_category_dropdown = current_app.config['FEATURE_FLAGS'].get('CATEGORY_DROPDOWN', False)
     """Render the page to add a new technical debt item"""
+    use_category_dropdown = current_app.config['FEATURE_FLAGS'].get('CATEGORY_DROPDOWN', False)
     return render_template('add.html', use_category_dropdown=use_category_dropdown)
 
 @api.route('/edit/<int:debt_id>')

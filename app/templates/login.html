@@ -1,46 +1,27 @@
 <!DOCTYPE html>
 <html>
-    <img src="/static/images/logo.png" alt="Technical Debt Tracker Logo" class="logo">
 <head>
 	<title>Login</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
+
 <body>
-    <h2 class="login-title">Technical Debt Tracker</h2>
+    <div class="login-container">
+        <img src="/static/images/logo.png" alt="Technical Debt Tracker Logo" class="logo">
 
-    <form id="loginForm" class="login-form">
-        <input type="text" id="username" placeholder="Username" required />
-        <br><br>
-        <input type="password" id="password" placeholder="Password" required />
-        <br><br>
-        <button type="submit">Login</button>
-    </form>
+            <h2 class="login-title">Technical Debt Tracker</h2>
 
-    <p id="error" style="color:red;"></p>
+        <form id="loginForm" class="login-form">
+            <input type="text" id="username" placeholder="Username" required />
+            <br><br>
+            <input type="password" id="password" placeholder="Password" required />
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
+        <p id="error" style="color:red;"></p>
 
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ username, password })    
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                window.location.href = "/";
-            } else {
-                document.getElementById("error").innerText = data.message;
-            }
-        });
-    </script>
+        <script src="/static/login.js"></script>
+    </div>
 </body>
 </html>
