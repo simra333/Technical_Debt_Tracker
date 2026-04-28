@@ -70,10 +70,11 @@ spec:
                         '''
                     }
                 }
-                post {
-                    always {
-                        junit 'test-results.xml'
-                    }
+            }
+            post {
+                always {
+                    junit 'test-results.xml'
+                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
                 }
             }
         }
