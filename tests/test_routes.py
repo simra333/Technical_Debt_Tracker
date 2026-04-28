@@ -172,6 +172,3 @@ class TestRoutes(unittest.TestCase):
             with self.app.app_context():
                 deleted_debt = db.session.get(TechnicalDebt, debt_id)
                 self.assertIsNone(deleted_debt)
-
-if __name__ == '__main__':
-    unittest.main()

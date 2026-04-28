@@ -70,6 +70,11 @@ spec:
                         '''
                     }
                 }
+                post {
+                    always {
+                        junit 'test-results.xml'
+                    }
+                }
             }
         }
         stage('Dependency Vulnerability Scan') {

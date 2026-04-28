@@ -45,5 +45,3 @@ class TestTechnicalDebtModel(unittest.TestCase):
         self.assertEqual(saved.assigned_to, "Alice")
         self.assertIsInstance(saved.created_at, datetime)
 
-if __name__ == '__main__':
-    unittest.main()

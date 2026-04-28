@@ -11,12 +11,12 @@ COPY requirements.txt .
 RUN python -m venv /opt/venv
 
 # Activate virtual environment and install dependencies
-RUN /opt/venv/bin/pip install -r requirements.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # Set environment variable to use the virtual environment
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY . .
+COPY --chown=appuser:appuser . .
 
 # Switch to non-root user
 USER appuser
