@@ -71,12 +71,6 @@ spec:
                     }
                 }
             }
-            post {
-                always {
-                    junit 'test-results.xml'
-                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
-                }
-            }
         }
         stage('Dependency Vulnerability Scan') {
             steps {
