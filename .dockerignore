@@ -13,3 +13,11 @@ jenkins-controller-image/
 .trufflehogignore
 
 *.log
+
+instance/
+*.db
+
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3

@@ -40,6 +40,7 @@ def get_debt(debt_id):
         'id': debt.id,
         'title': debt.title,
         'description': debt.description,
+        'category': debt.category,
         'risk': debt.risk,
         'effort_estimate': debt.effort_estimate,
         'status': debt.status,

@@ -3,11 +3,13 @@ terraform.tfstate.*
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
-.terraform.lock.hcl
-terraform.tfvars
 __pycache__/
+.pytest_cache/
 *.pyc
+.coverage
+htmlcov/
 *.db
 instance/
-venv/
+.venv/
 .env
+*.log
