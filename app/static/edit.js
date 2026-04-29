@@ -23,11 +23,18 @@ fetch(`/api/debts/${debtId}`)
 document.getElementById('edit-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
 
+    const risk = Number(document.getElementById('risk').value);
+
+    if (risk < 1 || risk > 5) {
+        alert('Risk must be between 1 and 5');
+        return;
+    }
+
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
         category: categoryInput.value,
-        risk: document.getElementById('risk').value,
+        risk: risk,
         effort_estimate: document.getElementById('effort_estimate').value,
         status: document.getElementById('status').value,
         assigned_to: document.getElementById('assigned_to').value

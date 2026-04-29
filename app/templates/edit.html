@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>Edit Technical Debt Item</h1>
-        <a href="/">Back to Main Page</a>
+        <button type="button" onclick="window.location.href='/'">Back to Main Page</button>
 
         <form id = "edit-form">
             <input type="hidden" id="debt-id" value="{{debt_id}}">
@@ -35,8 +35,19 @@
 
             <br><br>
 
-            <label for ="risk">Risk</label>
-            <input type="number" id="risk" name="risk" value="{{debt_item.risk}}" required>
+            <label for="risk">Risk</label>
+            <input
+                type="number"
+                id="risk"
+                name="risk"
+                value=debt_item.risk
+                min="1"
+                max="5"
+                step="1"
+                placeholder="Enter a value between 1 and 5"
+                required
+            >
+
             <br><br>
 
             <label for="effort_estimate">Effort Estimate (hours)</label>

@@ -20,7 +20,6 @@ def health():
         logger.exception("Health check failed")
         return {"status": "unhealthy", "error": str(e)}, 500
     
-
 # API Routes (return JSON data)
 @api.route('/api/debts', methods=['GET']) 
 @api_login_required
@@ -48,6 +47,8 @@ def get_debt(debt_id):
         'created_at': debt.created_at.isoformat()
     })
 
+ALLOWED_STATUS = {"Open", "In Progress", "Resolved"}
+ALLOWED_CATEGORIES = {"Architectural Debt", "Code Debt", "Testing Debt", "Documentation Debt", "Other"}
 @api.route('/api/debts', methods=['POST']) 
 @api_login_required
 def create_debt():
@@ -58,7 +59,24 @@ def create_debt():
 
     if not data.get('title'):
         logger.warning("metric=debt_creation_failed count=1 reason=missing_title")
-        return jsonify({"error": "Title is required"}), 400
+        return jsonify({"message": "Title is required"}), 400
+    
+    status = data.get('status', 'Open')
+    if status not in ALLOWED_STATUS:
+        logger.warning("metric=debt_creation_failed count=1 reason=invalid_status")
+        return jsonify({"message": "Invalid status"}), 400
+    
+    category = data.get('category', 'Other')
+    if category not in ALLOWED_CATEGORIES:
+        logger.warning("metric=debt_creation_failed count=1 reason=invalid_category")
+        return jsonify({"message": "Invalid category"}), 400
+
+    try:
+        risk = int(data['risk'])
+        effort_estimate = int(data['effort_estimate'])
+    except (ValueError, TypeError):
+        logger.warning("metric=debt_creation_failed count=1 reason=invalid_input")
+        return jsonify({"message": "Invalid input"}), 400
 
     try:
         new_debt = TechnicalDebt(
