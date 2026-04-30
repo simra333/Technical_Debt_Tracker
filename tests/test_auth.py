@@ -20,6 +20,7 @@ class TestApiAuth(unittest.TestCase):
         with self.app.app_context():
             db.session.remove()
             db.drop_all()
+            db.engine.dispose()  
 
     def test_get_requires_login(self):
         """Test GET is blocked without login"""
@@ -127,3 +128,46 @@ class TestApiAuth(unittest.TestCase):
         with self.app.app_context():
             still_exists = db.session.get(TechnicalDebt, debt_id)
             self.assertIsNotNone(still_exists)
+
+    def test_get_by_id_requires_login(self):
+        """Test GET by ID is blocked without login"""
+
+        # Create a record directly in DB
+        with self.app.app_context():
+            debt = TechnicalDebt(
+                title="To retrieve",
+                description="Should remain",
+                category="Architectural Debt",
+                risk=2,
+                effort_estimate=1,
+                status="Open",
+                assigned_to="Alice"
+            )
+            db.session.add(debt)
+            db.session.commit()
+            debt_id = debt.id
+
+        response = self.client.get(f'/api/debts/{debt_id}')
+
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Unauthorized')
+
+    def test_health_does_not_require_login(self):
+        """Test /health endpoint is accessible without login"""
+        response = self.client.get('/health')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertEqual(data['status'], 'healthy')
+
+    def test_ui_index_requires_login(self):
+        """Test UI index page is blocked without login"""
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 302)  # Redirect to login
+        self.assertIn('/login', response.headers['Location'])
+
+    def test_ui_add_requires_login(self):
+        """Test UI add page is blocked without login"""
+        response = self.client.get('/add')
+        self.assertEqual(response.status_code, 302)  # Redirect to login
+        self.assertIn('/login', response.headers['Location'])

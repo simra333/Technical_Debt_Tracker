@@ -10,6 +10,12 @@ document.getElementById('add-debt-item').addEventListener('submit', function(eve
         return;
     }
 
+    const effort_estimate = Number(document.getElementById('effort_estimate').value);
+    if (effort_estimate < 1) {
+        alert('Effort estimate must be greater than 0');
+        return;
+    }
+
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,

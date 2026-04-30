@@ -30,6 +30,13 @@ document.getElementById('edit-form').addEventListener('submit', function(event) 
         return;
     }
 
+    const effort_estimate = Number(document.getElementById('effort_estimate').value);
+
+    if (effort_estimate < 1) {
+        alert('Effort estimate must be greater than 0');
+        return;
+    }
+
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,

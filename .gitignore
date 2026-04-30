@@ -13,3 +13,6 @@ instance/
 .venv/
 .env
 *.log
+__pycache__/
+*.py[cod]
+*$py.class

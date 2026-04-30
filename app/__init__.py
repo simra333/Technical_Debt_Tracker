@@ -47,7 +47,10 @@ def create_app(config_class=Config):
 
     setup_monitoring()
 
-    app.secret_key = os.environ.get("SECRET_KEY", "dev-only-fallback")  # Set secret key for session management
+    app.secret_key = app.config.get("SECRET_KEY")
+    
+    if not app.secret_key:
+        raise RuntimeError("SECRET_KEY must be set")                
 
     db.init_app(app)                        # Initialise the database with this app
 

@@ -43,14 +43,22 @@
                 min="1"
                 max="5"
                 step="1"
-                placeholder="Enter a value between 1 and 5"
+                placeholder="Enter a value between 1 (low risk) and 5 (high risk)"
                 required
             >
 
             <br><br>
 
             <label for="effort_estimate">Effort Estimate (hours)</label>
-            <input type="number" id="effort_estimate" name="effort_estimate" required>
+            <input 
+            type="number" 
+            id="effort_estimate" 
+            name="effort_estimate" 
+            min="1"
+            step="1"
+            placeholder="Enter a value greater than 0"
+            required
+            >
 
             <br><br>
 
