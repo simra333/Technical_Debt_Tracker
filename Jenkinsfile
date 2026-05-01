@@ -16,7 +16,7 @@ spec:
       - cat 
       tty: true
     - name: python
-      image: python:3.10-slim
+      image: tdtrackeracr.azurecr.io/tdt-python-ci:1.1
       command:
       - cat
       tty: true
@@ -58,11 +58,6 @@ spec:
                 container ('python') {
                     withCredentials([string(credentialsId: 'flask-secret-key', variable: 'SECRET_KEY')]) {
                         sh '''
-                            python -m venv venv
-                            . venv/bin/activate
-                            pip install --upgrade pip
-                            pip install -r requirements-dev.txt
-
                             pytest tests/ \
                                 --junitxml=test-results.xml \
                                 --cov=app \
@@ -72,14 +67,37 @@ spec:
                 }
             }
         }
+        stage('Archive Test Results') {
+            steps {
+                junit 'test-results.xml'
+                publishCoverage adapters: [coberturaAdapter('coverage.xml')]
+            }
+        }
+        stage('Static Application Security Testing - Bandit') {
+            steps {
+                container('python') {
+                    sh '''
+                        echo "Running Bandit SAST scan..."
+
+                        bandit -r ${APP_DIR} -f json -o bandit-report.json
+
+                        # Fail build if HIGH or MEDIUM issues exist
+                        bandit -r ${APP_DIR} -lll
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'bandit-report.json', allowEmptyArchive: true
+                }
+            }
+        }
         stage('Dependency Vulnerability Scan') {
             steps {
                 container('python') {
                     sh '''
-                        set -e
                         echo "Running dependency vulnerability scan..."
-                        . venv/bin/activate
-                        pip install pip-audit
+
                         pip-audit -r requirements.txt --strict -f json -o pip-audit-report.json
 
                         echo "No known vulnerabilities found"
@@ -140,7 +158,7 @@ spec:
                         az acr build \
                         --registry ${ACR_NAME} \
                         --image ${IMAGE_NAME}:${IMAGE_TAG} \
-                        --file Dockerfile \
+                        --file docker/Dockerfile \
                         .
                     '''
                 }
