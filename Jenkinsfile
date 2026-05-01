@@ -66,17 +66,18 @@ spec:
                     }
                 }
             }
-        }
-        stage('Archive Test Results') {
-            steps {
-                junit 'test-results.xml'
-                publishCoverage adapters: [coberturaAdapter('coverage.xml')]
+            post {
+                always {
+                    archiveArtifacts artifacts: 'test-results.xml', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'coverage.xml', allowEmptyArchive: true
+                }
             }
         }
         stage('Static Application Security Testing - Bandit') {
             steps {
                 container('python') {
                     sh '''
+                        set -e
                         echo "Running Bandit SAST scan..."
 
                         bandit -r ${APP_DIR} -f json -o bandit-report.json
@@ -96,11 +97,18 @@ spec:
             steps {
                 container('python') {
                     sh '''
+                        set -e
                         echo "Running dependency vulnerability scan..."
 
                         pip-audit -r requirements.txt --strict -f json -o pip-audit-report.json
 
-                        echo "No known vulnerabilities found"
+                        if [ -s pip-audit-report.json ]; then
+                            echo "Vulnerabilities detected"
+                            cat pip-audit-report.json
+                            exit 1
+                        else
+                            echo "No known vulnerabilities found"
+                        fi
 
                         echo ""
                         echo "=== Suggested Fixes (Dry Run) ==="
