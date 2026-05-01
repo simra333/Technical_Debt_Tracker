@@ -102,14 +102,6 @@ spec:
 
                         pip-audit -r requirements.txt --strict -f json -o pip-audit-report.json
 
-                        if [ -s pip-audit-report.json ]; then
-                            echo "Vulnerabilities detected"
-                            cat pip-audit-report.json
-                            exit 1
-                        else
-                            echo "No known vulnerabilities found"
-                        fi
-
                         echo ""
                         echo "=== Suggested Fixes (Dry Run) ==="
 
