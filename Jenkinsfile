@@ -30,7 +30,9 @@ spec:
     }
 
     parameters {
-    choice(name: 'FF_CATEGORY_DROPDOWN', choices: ['true', 'false'], description: 'Feature flag: show Category dropdown in UI')
+    choice(name: 'FF_CATEGORY_DROPDOWN', 
+    choices: ['true', 'false'], 
+    description: 'Feature flag: show Category dropdown in UI')
 }
 
     environment {
@@ -50,7 +52,7 @@ spec:
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/simra333/Technical_Debt_Tracker.git'
+                checkout scm
             }
         }
         stage('Run Unit Tests') {
@@ -168,14 +170,20 @@ spec:
             steps {
                 container('devops-tools') {
                     sh '''
-                        az aks get-credentials --resource-group ${AKS_RESOURCE_GROUP} --name ${AKS_CLUSTER_NAME}
+                        # Authenticate with AKS cluster
+                        az aks get-credentials \
+                            --resource-group ${AKS_RESOURCE_GROUP} \
+                            --name ${AKS_CLUSTER_NAME}
 
                         # Update deployment with new image
                         kubectl set image deployment/${DEPLOYMENT_NAME} \
                             ${CONTAINER_NAME}=${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} \
                             --namespace ${NAMESPACE}
 
-                        kubectl set env deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE} FF_CATEGORY_DROPDOWN=${FF_CATEGORY_DROPDOWN}
+                        # Update feature flag environment variable
+                        kubectl set env deployment/${DEPLOYMENT_NAME} \
+                        --namespace ${NAMESPACE} \
+                        FF_CATEGORY_DROPDOWN=${FF_CATEGORY_DROPDOWN}
 
                         # Check rollout status
                         kubectl rollout status deployment/${DEPLOYMENT_NAME} --namespace ${NAMESPACE}
