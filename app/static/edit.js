@@ -1,11 +1,14 @@
 const debtId = document.getElementById('debt-id').value;
 
+const categoryInput = document.getElementById('category') || document.getElementById('category_text');
+
 // Load existing data
 fetch(`/api/debts/${debtId}`)
     .then(response => response.json())
     .then(debt => {
         document.getElementById('title').value = debt.title;
         document.getElementById('description').value = debt.description;
+        categoryInput.value = debt.category;
         document.getElementById('risk').value = debt.risk;
         document.getElementById('effort_estimate').value = debt.effort_estimate;
         document.getElementById('status').value = debt.status;
@@ -20,10 +23,25 @@ fetch(`/api/debts/${debtId}`)
 document.getElementById('edit-form').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
 
+    const risk = Number(document.getElementById('risk').value);
+
+    if (risk < 1 || risk > 5) {
+        alert('Risk must be between 1 and 5');
+        return;
+    }
+
+    const effort_estimate = Number(document.getElementById('effort_estimate').value);
+
+    if (effort_estimate < 1) {
+        alert('Effort estimate must be greater than 0');
+        return;
+    }
+
     const formData = {
         title: document.getElementById('title').value,
         description: document.getElementById('description').value,
-        risk: document.getElementById('risk').value,
+        category: categoryInput.value,
+        risk: risk,
         effort_estimate: document.getElementById('effort_estimate').value,
         status: document.getElementById('status').value,
         assigned_to: document.getElementById('assigned_to').value

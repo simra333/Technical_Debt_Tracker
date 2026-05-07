@@ -2,13 +2,12 @@ import unittest
 from app import create_app, db
 from app.models import TechnicalDebt
 from datetime import datetime
+from config import TestConfig
 
 class TestTechnicalDebtModel(unittest.TestCase):
     def setUp(self): 
         """Set up a test fixture before each test."""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
@@ -24,8 +23,9 @@ class TestTechnicalDebtModel(unittest.TestCase):
         debt = TechnicalDebt(
             title="Test Debt 1",
             description="This is a test item",
-            risk="High",
-            effort_estimate="Medium",
+            category="Architectural Debt",
+            risk=5,
+            effort_estimate=3,
             status="Open",
             assigned_to="Alice",
             created_at=datetime.now()
@@ -38,11 +38,10 @@ class TestTechnicalDebtModel(unittest.TestCase):
         self.assertIsNotNone(saved)
         self.assertEqual(saved.title, "Test Debt 1")
         self.assertEqual(saved.description, "This is a test item")
-        self.assertEqual(saved.risk, "High")
-        self.assertEqual(saved.effort_estimate, "Medium")
+        self.assertEqual(saved.category, "Architectural Debt")
+        self.assertEqual(saved.risk, 5)
+        self.assertEqual(saved.effort_estimate, 3)
         self.assertEqual(saved.status, "Open")
         self.assertEqual(saved.assigned_to, "Alice")
         self.assertIsInstance(saved.created_at, datetime)
 
-if __name__ == '__main__':
-    unittest.main()

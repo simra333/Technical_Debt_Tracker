@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <img src="/static/images/logo.png" alt="Technical Debt Tracker Logo" class="logo">
+
+            <h2 class="login-title">Technical Debt Tracker</h2>
+
+        <form id="loginForm" class="login-form">
+            <input type="text" id="username" placeholder="Username" required />
+            <br><br>
+            <input type="password" id="password" placeholder="Password" required />
+            <br><br>
+            <button type="submit">Login</button>
+        </form>
+
+        <p id="error" style="color:red;"></p>
+
+        <script src="/static/login.js"></script>
+    </div>
+</body>
+</html>

@@ -2,17 +2,20 @@ import unittest
 import json
 from app import create_app, db
 from app.models import TechnicalDebt
+from config import TestConfig
 
 class TestRoutes(unittest.TestCase):
     def setUp(self):
         """Set up a test fixture before each test."""
-        self.app = create_app()
-        self.app.config['TESTING'] = True
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+        self.app = create_app(TestConfig)
         self.client = self.app.test_client()
 
         with self.app.app_context():
             db.create_all()
+
+        # Simulate a logged-in user (so @api_login_required passes)
+        with self.client.session_transaction() as sess:
+            sess["user_id"] = 1
         
     def tearDown(self):
         """Clean up test fixtures after each test."""
@@ -26,8 +29,9 @@ class TestRoutes(unittest.TestCase):
         debt_data = {
             "title": "Test Debt 1",
             "description": "This is a test item",
-            "risk": "High",
-            "effort_estimate": "Medium",
+            "category": "Architectural Debt",
+            "risk": 5,
+            "effort_estimate": 3,
             "status": "Open",
             "assigned_to": "Alice"
         }
@@ -45,8 +49,9 @@ class TestRoutes(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(data['title'], 'Test Debt 1')
         self.assertEqual(data['description'], 'This is a test item')
-        self.assertEqual(data['risk'], 'High')
-        self.assertEqual(data['effort_estimate'], 'Medium')
+        self.assertEqual(data['category'], 'Architectural Debt')
+        self.assertEqual(data['risk'], 5)
+        self.assertEqual(data['effort_estimate'], 3)
         self.assertEqual(data['status'], 'Open')
         self.assertEqual(data['assigned_to'], 'Alice')
 
@@ -58,16 +63,18 @@ class TestRoutes(unittest.TestCase):
             debt1 = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )
             debt2 = TechnicalDebt(
                 title="Test Debt 2",
                 description="This is another test item",
-                risk="Medium",
-                effort_estimate="Low",
+                category="Architectural Debt",
+                risk=3,
+                effort_estimate=1,
                 status="Open",
                 assigned_to="Bob"
             )
@@ -90,8 +97,9 @@ class TestRoutes(unittest.TestCase):
             debt = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )
@@ -103,9 +111,10 @@ class TestRoutes(unittest.TestCase):
             updated_data = {
                 "title": "Updated Test Debt 1",
                 "description": "This is an updated test item",
-                "risk": "Low",
-                "effort_estimate": "Low",
-                "status": "Closed",
+                "category": "Architectural Debt",
+                "risk": 1,
+                "effort_estimate": 1,
+                "status": "Resolved",
                 "assigned_to": "Bob"
             }
             
@@ -121,19 +130,21 @@ class TestRoutes(unittest.TestCase):
             data = json.loads(response.data)
             self.assertEqual(data['title'], 'Updated Test Debt 1')
             self.assertEqual(data['description'], 'This is an updated test item')
-            self.assertEqual(data['risk'], 'Low')
-            self.assertEqual(data['effort_estimate'], 'Low')
-            self.assertEqual(data['status'], 'Closed')
+            self.assertEqual(data['category'], 'Architectural Debt')
+            self.assertEqual(data['risk'], 1)
+            self.assertEqual(data['effort_estimate'], 1)
+            self.assertEqual(data['status'], 'Resolved')
             self.assertEqual(data['assigned_to'], 'Bob')
 
             # Verify the item was updated in the database
             with self.app.app_context():
                 updated_debt = db.session.get(TechnicalDebt, debt_id)
                 self.assertEqual(updated_debt.title, 'Updated Test Debt 1')
-                self.assertEqual(updated_debt.description, 'This is an updated test item')      
-                self.assertEqual(updated_debt.risk, 'Low')
-                self.assertEqual(updated_debt.effort_estimate, 'Low')
-                self.assertEqual(updated_debt.status, 'Closed')
+                self.assertEqual(updated_debt.description, 'This is an updated test item')
+                self.assertEqual(updated_debt.category, 'Architectural Debt')      
+                self.assertEqual(updated_debt.risk, 1)
+                self.assertEqual(updated_debt.effort_estimate, 1)
+                self.assertEqual(updated_debt.status, 'Resolved')
                 self.assertEqual(updated_debt.assigned_to, 'Bob')
 
     def test_delete_debt(self):
@@ -143,8 +154,9 @@ class TestRoutes(unittest.TestCase):
             debt = TechnicalDebt(
                 title="Test Debt 1",
                 description="This is a test item",
-                risk="High",
-                effort_estimate="Medium",
+                category="Architectural Debt",
+                risk=5,
+                effort_estimate=3,
                 status="Open",
                 assigned_to="Alice"
             )
@@ -161,5 +173,129 @@ class TestRoutes(unittest.TestCase):
                 deleted_debt = db.session.get(TechnicalDebt, debt_id)
                 self.assertIsNone(deleted_debt)
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_create_debt_rejects_missing_title(self):
+        """Test that creating a technical debt item without a title is rejected"""
+
+        with self.app.app_context():
+
+            response = self.client.post(
+                '/api/debts',
+                data=json.dumps({
+                    "description": "This item is missing a title",
+                    "category": "Architectural Debt",
+                    "risk": 5,
+                    "effort_estimate": 3,
+                    "status": "Open",
+                    "assigned_to": "Alice"
+                }),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+            data = json.loads(response.data)
+            self.assertIn("Title is required", data['message'])
+
+            with self.app.app_context():
+                self.assertEqual(TechnicalDebt.query.count(), 0)
+
+    def test_create_debt_rejects_invalid_status(self):
+        """Test that creating a technical debt item with an invalid status is rejected"""
+
+        with self.app.app_context():
+
+            response = self.client.post(
+                '/api/debts',
+                data=json.dumps({
+                    "title": "Invalid Status Debt",
+                    "description": "This item has an invalid status",
+                    "category": "Architectural Debt",
+                    "risk": 5,
+                    "effort_estimate": 3,
+                    "status": "Invalid_Status",
+                    "assigned_to": "Alice"
+                }),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+            data = json.loads(response.data)
+            self.assertIn("Invalid status", data['message'])
+
+            with self.app.app_context():
+                self.assertEqual(TechnicalDebt.query.count(), 0)
+
+    def test_create_debt_rejects_invalid_category(self):
+        """Test that creating a technical debt item with an invalid category is rejected"""
+
+        with self.app.app_context():
+
+            response = self.client.post(
+                '/api/debts',
+                data=json.dumps({
+                    "title": "Invalid Category Debt",
+                    "description": "This item has an invalid category",
+                    "category": "Invalid_Category",
+                    "risk": 5,
+                    "effort_estimate": 3,
+                    "status": "Open",
+                    "assigned_to": "Alice"
+                }),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+            data = json.loads(response.data)
+            self.assertIn("Invalid category", data['message'])
+
+            with self.app.app_context():
+                self.assertEqual(TechnicalDebt.query.count(), 0)
+
+    def test_create_debt_rejects_non_integer_risk(self):
+        """Test that creating a technical debt item with a non-integer risk is rejected"""
+
+        with self.app.app_context():
+
+            response = self.client.post(
+                '/api/debts',
+                data=json.dumps({
+                    "title": "Non-integer Risk Debt",
+                    "description": "This item has a non-integer risk",
+                    "category": "Architectural Debt",
+                    "risk": "High",
+                    "effort_estimate": 3,
+                    "status": "Open",
+                    "assigned_to": "Alice"
+                }),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+            data = json.loads(response.data)
+            self.assertIn("Invalid input", data['message'])
+
+            with self.app.app_context():
+                self.assertEqual(TechnicalDebt.query.count(), 0)
+
+    def test_create_debt_rejects_non_integer_effort_estimate(self):
+        """Test that creating a technical debt item with a non-integer effort estimate is rejected"""
+
+        with self.app.app_context():
+
+            response = self.client.post(
+                '/api/debts',
+                data=json.dumps({
+                    "title": "Non-integer Effort Estimate Debt",
+                    "description": "This item has a non-integer effort estimate",
+                    "category": "Architectural Debt",
+                    "risk": 5,
+                    "effort_estimate": "High",
+                    "status": "Open",
+                    "assigned_to": "Alice"
+                }),
+                content_type='application/json'
+            )
+            self.assertEqual(response.status_code, 400)
+            data = json.loads(response.data)
+            self.assertIn("Invalid input", data['message'])
+
+            with self.app.app_context():
+                self.assertEqual(TechnicalDebt.query.count(), 0)
+    
+
+            
