@@ -80,6 +80,29 @@ class TestApiAuth(unittest.TestCase):
         data = json.loads(response.data)
         self.assertEqual(data['message'], 'Invalid input')
 
+    def test_login_wrong_password(self):
+        """Test login fails with incorrect password"""
+        # First, register a user
+        with self.app.app_context():
+            user = User(
+                username='testuser',
+                password_hash=hash_password('correctpassword')
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # Attempt to log in with wrong password
+        response = self.client.post(
+            '/login',
+            json={
+                'username': 'testuser',
+                'password': 'wrongpassword'
+            }
+        )
+        self.assertEqual(response.status_code, 401)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Invalid username or password')
+
     def test_hash_password_success(self):
         """Test password hashing works correctly"""
 
@@ -277,5 +300,11 @@ class TestApiAuth(unittest.TestCase):
     def test_ui_add_requires_login(self):
         """Test UI add page is blocked without login"""
         response = self.client.get('/add')
+        self.assertEqual(response.status_code, 302)  # Redirect to login
+        self.assertIn('/login', response.headers['Location'])
+
+    def test_logout_requires_login(self):
+        """Test logout is blocked without login"""
+        response = self.client.post('/logout')
         self.assertEqual(response.status_code, 302)  # Redirect to login
         self.assertIn('/login', response.headers['Location'])
