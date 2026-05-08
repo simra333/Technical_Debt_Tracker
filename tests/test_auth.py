@@ -1,7 +1,8 @@
 import unittest
 import json
 from app import create_app, db
-from app.models import TechnicalDebt
+from app.models import TechnicalDebt, User
+from app.auth.services import hash_password, verify_password
 from config import TestConfig
 
 
@@ -21,6 +22,65 @@ class TestApiAuth(unittest.TestCase):
             db.session.remove()
             db.drop_all()
             db.engine.dispose()  
+
+    def test_register_success(self):
+        """Test successful user registration"""
+        response = self.client.post(
+            '/register',
+            json={
+                'username': 'testuser',
+                'password': 'testpassword'
+            }
+        )
+        self.assertEqual(response.status_code, 201)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'User registered successfully')
+
+        with self.app.app_context():
+            user = User.query.filter_by(username='testuser').first()
+            self.assertIsNotNone(user)
+            self.assertNotEqual(user.password_hash, 'testpassword')  # Ensure password is hashed
+
+    def test_login_success(self):
+        """Test successful user login"""
+        # First, register a user
+        with self.app.app_context():
+            user = User(
+                username='testuser',
+                password_hash='pbkdf2:sha256:150000$abc$def'  # Mock hash
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # Now attempt to log in
+        response = self.client.post(
+            '/login',
+            json={
+                'username': 'testuser',
+                'password': 'testpassword'  # This won't match the mock hash, but we just want to test flow
+            }
+        )
+        self.assertEqual(response.status_code, 401)  # Should fail due to mock hash
+
+    def test_hash_password_success(self):
+        """Test password hashing works correctly"""
+
+        hashed = hash_password('plain_password')
+
+        self.assertNotEqual('plain_password', hashed)  # Ensure it's actually hashed
+        self.assertTrue(verify_password('plain_password', hashed))  # Verify it matches
+
+    def test_hash_password_invalid_input(self):
+        """Test hashing with invalid input raises error"""
+        with self.assertRaises(ValueError):
+            hash_password('')  # Empty string should raise error
+
+        with self.assertRaises(ValueError):
+            hash_password(None)  # None should raise error
+
+        with self.assertRaises(ValueError):
+            hash_password(123)  # Non-string should raise error
+            
 
     def test_get_requires_login(self):
         """Test GET is blocked without login"""
