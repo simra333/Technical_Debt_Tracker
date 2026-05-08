@@ -80,6 +80,36 @@ class TestApiAuth(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             hash_password(123)  # Non-string should raise error
+
+    def test_verify_password_invalid_input(self):
+        """Test password verification with invalid input returns False"""
+        self.assertFalse(verify_password('', 'hash'))  # Empty password
+        self.assertFalse(verify_password(None, 'hash'))  # None password
+        self.assertFalse(verify_password('plain_password', ''))  # Empty hash
+        self.assertFalse(verify_password('plain_password', None))  # None hash
+
+    def test_login_successful(self):
+        """Test successful login with correct credentials"""
+        # First, register a user
+        with self.app.app_context():
+            user = User(
+                username='testuser',
+                password_hash=hash_password('testpassword')
+            )
+            db.session.add(user)
+            db.session.commit()
+
+        # Now attempt to log in
+        response = self.client.post(
+            '/login',
+            json={
+                'username': 'testuser',
+                'password': 'testpassword'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Login successful')
             
 
     def test_get_requires_login(self):
