@@ -63,7 +63,7 @@ spec:
                             pytest tests/ \
                                 --junitxml=test-results.xml \
                                 --cov=app \
-                                --cov-report=xml
+                                --cov-report=xml \
                                 --cov-fail-under=80
                         '''
                     }
