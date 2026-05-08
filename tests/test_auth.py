@@ -41,26 +41,44 @@ class TestApiAuth(unittest.TestCase):
             self.assertIsNotNone(user)
             self.assertNotEqual(user.password_hash, 'testpassword')  # Ensure password is hashed
 
-    def test_login_success(self):
-        """Test successful user login"""
+    def test_register_duplicate_username(self):
+        """Test registration with duplicate username fails"""
         # First, register a user
         with self.app.app_context():
             user = User(
                 username='testuser',
-                password_hash='pbkdf2:sha256:150000$abc$def'  # Mock hash
+                password_hash=hash_password('testpassword')
             )
             db.session.add(user)
             db.session.commit()
 
-        # Now attempt to log in
+        # Attempt to register with the same username
         response = self.client.post(
-            '/login',
+            '/register',
             json={
                 'username': 'testuser',
-                'password': 'testpassword'  # This won't match the mock hash, but we just want to test flow
+                'password': 'anotherpassword'
             }
         )
-        self.assertEqual(response.status_code, 401)  # Should fail due to mock hash
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Username already exists')
+
+    def test_login_missing_username(self):
+        """Test login fails when username is missing"""
+        response = self.client.post('/login', json={'password': 'testpassword'  })
+        
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Invalid input')
+
+    def test_login_missing_password(self):
+        """Test login fails when password is missing"""
+        response = self.client.post('/login', json={'username': 'testuser'})
+
+        self.assertEqual(response.status_code, 400)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], 'Invalid input')
 
     def test_hash_password_success(self):
         """Test password hashing works correctly"""
